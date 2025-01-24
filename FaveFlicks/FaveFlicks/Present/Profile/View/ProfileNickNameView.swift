@@ -11,7 +11,7 @@ import UIKit
 final class ProfileNickNameView: UIView {
     
     let profileImageView: ProfileView = {
-        let imageView = ProfileView(size: 80)
+        let imageView = ProfileView(size: 100)
         imageView.isUserInteractionEnabled = true
         return imageView
     }()
@@ -25,7 +25,7 @@ final class ProfileNickNameView: UIView {
         configuration.baseForegroundColor = UIColor(resource: .faveFlicksWhite)
         
         let button = UIButton(configuration: configuration)
-        button.layer.cornerRadius = 12
+        button.layer.cornerRadius = 15
         button.clipsToBounds = true
         return button
     }()
@@ -113,7 +113,7 @@ final class ProfileNickNameView: UIView {
         
         profileImageButton.snp.makeConstraints {
             $0.bottom.trailing.equalTo(profileImageView)
-            $0.size.equalTo(24)
+            $0.size.equalTo(30)
         }
         
         nickNameTextField.snp.makeConstraints {
