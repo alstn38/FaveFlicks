@@ -18,7 +18,12 @@ final class OnboardingViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        configureNavigation()
         configureAddTarget()
+    }
+    
+    private func configureNavigation() {
+        navigationItem.backButtonTitle = StringLiterals.NavigationItem.backButtonTitle
     }
     
     private func configureAddTarget() {
