@@ -17,5 +17,16 @@ final class OnboardingViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        configureAddTarget()
+    }
+    
+    private func configureAddTarget() {
+        onboardingView.startButton.addTarget(self, action: #selector(startButtonDidTap), for: .touchUpInside)
+    }
+    
+    @objc private func startButtonDidTap(_ sender: UIButton) {
+        let profileNickNameViewController = ProfileNickNameViewController()
+        navigationController?.pushViewController(profileNickNameViewController, animated: true)
     }
 }
