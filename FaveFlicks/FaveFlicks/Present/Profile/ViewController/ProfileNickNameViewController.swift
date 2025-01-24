@@ -19,9 +19,50 @@ final class ProfileNickNameViewController: UIViewController {
         super.viewDidLoad()
         
         configureNavigation()
+        configureTextField()
+    }
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        view.endEditing(true)
     }
     
     private func configureNavigation() {
         navigationItem.title = StringLiterals.ProfileNickName.title
+    }
+    
+    private func configureTextField() {
+        profileNickNameView.nickNameTextField.delegate = self
+        profileNickNameView.nickNameTextField.addTarget(self, action: #selector(nickNameTextFieldDidEditingChange), for: .editingChanged)
+    }
+    
+    @objc private func nickNameTextFieldDidEditingChange(_ sender: UITextField) {
+        let sectionSignArray: [Character] = ["@", "#", "$", "%"]
+        guard let inputNickName = sender.text else { return }
+        guard !inputNickName.isEmpty else {
+            return profileNickNameView.configureNickNameStatus(.empty)
+        }
+        
+        guard inputNickName.count >= 2 && inputNickName.count < 10 else {
+            return profileNickNameView.configureNickNameStatus(.invalidRange)
+        }
+        
+        guard !inputNickName.contains(where: { sectionSignArray.contains($0) }) else {
+            return profileNickNameView.configureNickNameStatus(.hasSectionSign)
+        }
+        
+        guard !inputNickName.contains(where: { $0.isNumber }) else {
+            return profileNickNameView.configureNickNameStatus(.hasNumber)
+        }
+        
+        profileNickNameView.configureNickNameStatus(.possible)
+    }
+}
+
+// MARK: - UITextFieldDelegate
+extension ProfileNickNameViewController: UITextFieldDelegate {
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        view.endEditing(true)
+        return true
     }
 }

@@ -33,6 +33,7 @@ final class ProfileNickNameView: UIView {
     let nickNameTextField: UITextField = {
         let textField = UITextField()
         textField.borderStyle = .none
+        textField.returnKeyType = .done
         textField.font = .systemFont(ofSize: 13, weight: .medium)
         textField.attributedPlaceholder = NSAttributedString(
             string: StringLiterals.ProfileNickName.nickNamePlaceholder,
@@ -51,7 +52,6 @@ final class ProfileNickNameView: UIView {
     
     private let nickNameStatusLabel: UILabel = {
         let label = UILabel()
-        label.text = "상태조건확인용바로 그글자입니다." // TODO: - 이후 변경
         label.textColor = UIColor(resource: .faveFlicsMain)
         label.font = .systemFont(ofSize: 12, weight: .regular)
         return label
@@ -84,6 +84,10 @@ final class ProfileNickNameView: UIView {
     @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    func configureNickNameStatus(_ status: NickNameStatus) {
+        nickNameStatusLabel.text = status.description
     }
     
     private func configureView() {
@@ -134,6 +138,33 @@ final class ProfileNickNameView: UIView {
             $0.top.equalTo(nickNameStatusLabel.snp.bottom).offset(20)
             $0.horizontalEdges.equalTo(safeAreaLayoutGuide).inset(15)
             $0.height.equalTo(38)
+        }
+    }
+}
+
+// MARK: - NickNameStatus
+extension ProfileNickNameView {
+    
+    enum NickNameStatus {
+        case empty
+        case possible
+        case invalidRange
+        case hasSectionSign
+        case hasNumber
+        
+        var description: String? {
+            switch self {
+            case .empty:
+                return nil
+            case .possible:
+                return StringLiterals.ProfileNickName.possibleStatus
+            case .invalidRange:
+                return StringLiterals.ProfileNickName.invalidRangeStatus
+            case .hasSectionSign:
+                return StringLiterals.ProfileNickName.hasSectionSignStatus
+            case .hasNumber:
+                return StringLiterals.ProfileNickName.hasNumberStatus
+            }
         }
     }
 }
