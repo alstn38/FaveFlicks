@@ -28,4 +28,8 @@ enum StringLiterals {
         static let hasSectionSignStatus: String = "낙내암애 @, #, $, %는 포함할 수 없어요"
         static let hasNumberStatus: String = "닉네임에 숫자는 포함할 수 없어요"
     }
+    
+    enum ProfileImage {
+        static let title: String = "프로필 이미지 설정"
+    }
 }
