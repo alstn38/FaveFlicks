@@ -9,6 +9,10 @@ import Foundation
 
 enum StringLiterals {
     
+    enum NavigationItem {
+        static let backButtonTitle: String = ""
+    }
+    
     enum Onboarding {
         static let title: String = "Onboarding"
         static let subTitle: String = "당신만의 영화 세상,\nFavaFlicks를 시작해보세요."
