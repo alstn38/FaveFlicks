@@ -47,7 +47,7 @@ final class OnboardingView: UIView {
         configuration.baseForegroundColor = UIColor(resource: .faveFlicsMain)
         
         let button = UIButton(configuration: configuration)
-        button.layer.cornerRadius = 10
+        button.layer.cornerRadius = 20
         button.layer.borderWidth = 1
         button.layer.borderColor = UIColor(resource: .faveFlicsMain).cgColor
         return button
