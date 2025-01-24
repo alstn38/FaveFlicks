@@ -10,7 +10,11 @@ import UIKit
 
 final class ProfileImageView: UIView {
     
-    private let profileImageView = ProfileView(size: 100)
+    private let profileImageView: ProfileView = {
+        let view = ProfileView(size: 100)
+        view.isUserInteractionEnabled = false
+        return view
+    }()
     
     private let profileImageButton: UIButton = {
         var imageConfiguration = UIImage.SymbolConfiguration(pointSize: 10)
