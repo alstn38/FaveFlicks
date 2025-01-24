@@ -19,6 +19,7 @@ final class ProfileNickNameViewController: UIViewController {
         super.viewDidLoad()
         
         configureNavigation()
+        configureTapGestureRecognizer()
         configureTextField()
     }
     
@@ -28,11 +29,22 @@ final class ProfileNickNameViewController: UIViewController {
     
     private func configureNavigation() {
         navigationItem.title = StringLiterals.ProfileNickName.title
+        navigationItem.backButtonTitle = StringLiterals.NavigationItem.backButtonTitle
+    }
+    
+    private func configureTapGestureRecognizer() {
+        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(profileImageViewDidTap))
+        profileNickNameView.profileImageView.addGestureRecognizer(tapGestureRecognizer)
     }
     
     private func configureTextField() {
         profileNickNameView.nickNameTextField.delegate = self
         profileNickNameView.nickNameTextField.addTarget(self, action: #selector(nickNameTextFieldDidEditingChange), for: .editingChanged)
+    }
+    
+    @objc private func profileImageViewDidTap(_ sender: UIView) {
+        let profileImageViewController = ProfileImageViewController()
+        navigationController?.pushViewController(profileImageViewController, animated: true)
     }
     
     @objc private func nickNameTextFieldDidEditingChange(_ sender: UITextField) {
