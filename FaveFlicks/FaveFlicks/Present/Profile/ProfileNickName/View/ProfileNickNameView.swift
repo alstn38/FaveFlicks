@@ -156,10 +156,10 @@ extension ProfileNickNameView {
         case hasSectionSign
         case hasNumber
         
-        var description: String? {
+        var description: String {
             switch self {
             case .empty:
-                return nil
+                return ""
             case .possible:
                 return StringLiterals.ProfileNickName.possibleStatus
             case .invalidRange:

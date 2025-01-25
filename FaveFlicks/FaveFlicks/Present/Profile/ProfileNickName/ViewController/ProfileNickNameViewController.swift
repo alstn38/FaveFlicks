@@ -10,6 +10,7 @@ import UIKit
 final class ProfileNickNameViewController: UIViewController {
     
     private let profileNickNameView = ProfileNickNameView()
+    private var nickNameStatus: ProfileNickNameView.NickNameStatus = .invalidRange
     
     private let profileImageArray: [UIImage] = [
         .profile0, .profile1, .profile2, .profile3, .profile4, .profile5, .profile6, .profile7,.profile8,.profile9,.profile10,.profile11
@@ -31,6 +32,7 @@ final class ProfileNickNameViewController: UIViewController {
         configureProfileImage()
         configureTapGestureRecognizer()
         configureTextField()
+        configureButton()
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -57,6 +59,10 @@ final class ProfileNickNameViewController: UIViewController {
         profileNickNameView.nickNameTextField.addTarget(self, action: #selector(nickNameTextFieldDidEditingChange), for: .editingChanged)
     }
     
+    private func configureButton() {
+        profileNickNameView.confirmButton.addTarget(self, action: #selector(confirmButtonDidTap), for: .touchUpInside)
+    }
+    
     @objc private func profileImageViewDidTap(_ sender: UIView) {
         let profileImageViewController = ProfileImageViewController(
             selectedProfileImageIndex: selectedProfileImageIndex,
@@ -70,22 +76,35 @@ final class ProfileNickNameViewController: UIViewController {
         let sectionSignArray: [Character] = ["@", "#", "$", "%"]
         guard let inputNickName = sender.text else { return }
         guard !inputNickName.isEmpty else {
+            nickNameStatus = .invalidRange
             return profileNickNameView.configureNickNameStatus(.empty)
         }
         
         guard inputNickName.count >= 2 && inputNickName.count < 10 else {
+            nickNameStatus = .invalidRange
             return profileNickNameView.configureNickNameStatus(.invalidRange)
         }
         
         guard !inputNickName.contains(where: { sectionSignArray.contains($0) }) else {
+            nickNameStatus = .hasSectionSign
             return profileNickNameView.configureNickNameStatus(.hasSectionSign)
         }
         
         guard !inputNickName.contains(where: { $0.isNumber }) else {
+            nickNameStatus = .hasNumber
             return profileNickNameView.configureNickNameStatus(.hasNumber)
         }
         
+        nickNameStatus = .possible
         profileNickNameView.configureNickNameStatus(.possible)
+    }
+    
+    @objc private func confirmButtonDidTap(_ sender: UIButton) {
+        guard nickNameStatus == .possible else {
+            return presentAlert(title: StringLiterals.Alert.invalidNickName, message: nickNameStatus.description)
+        }
+        
+        print(#function)
     }
 }
 
