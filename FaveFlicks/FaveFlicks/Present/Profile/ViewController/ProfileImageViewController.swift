@@ -10,18 +10,29 @@ import UIKit
 final class ProfileImageViewController: UIViewController {
     
     private let profileImageView = ProfileImageView()
-    private let profileImageArray: [UIImage] = [
-        .profile0, .profile1, .profile2, .profile3, .profile4, .profile5, .profile6, .profile7,.profile8,.profile9,.profile10,.profile11
-    ]
+    private var selectedProfileImageIndex: Int
+    private let profileImageArray: [UIImage]
 
     override func loadView() {
         view = profileImageView
+    }
+    
+    init(selectedProfileImageIndex: Int, profileImageArray: [UIImage]) {
+        self.selectedProfileImageIndex = selectedProfileImageIndex
+        self.profileImageArray = profileImageArray
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         configureNavigation()
+        configureProfileImage()
         configureCollectionView()
     }
     
@@ -29,6 +40,10 @@ final class ProfileImageViewController: UIViewController {
         navigationItem.title = StringLiterals.ProfileImage.title
     }
     
+    private func configureProfileImage() {
+        let image = profileImageArray[selectedProfileImageIndex]
+        profileImageView.configureView(image: image)
+    }
     
     private func configureCollectionView() {
         profileImageView.profileImageCollectionView.delegate = self
