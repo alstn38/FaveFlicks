@@ -13,6 +13,12 @@ enum StringLiterals {
         static let backButtonTitle: String = ""
     }
     
+    enum TapBar {
+        static let cinemaTitle: String = "CINEMA"
+        static let upComingTitle: String = "UPCOMING"
+        static let settingTitle: String = "PROFILE"
+    }
+    
     enum Alert {
         static let invalidNickName: String = "닉네임이 조건에 맞지 않습니다"
         static let confirm: String = "확인"
