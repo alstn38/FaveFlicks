@@ -37,6 +37,18 @@ final class ProfileImageCollectionViewCell: UICollectionViewCell {
         profileImageView.image = image
     }
     
+    func configureView(isSelected: Bool) {
+        let alpha: CGFloat = isSelected ? 1.0 : 0.5
+        let borderWidth: CGFloat = isSelected ? 3.0 : 1.0
+        let borderColor: CGColor = isSelected
+        ? UIColor(resource: .faveFlicsMain).cgColor
+        : UIColor(resource: .faveFlicksLightGray).cgColor
+        
+        profileImageView.alpha = alpha
+        profileImageView.layer.borderWidth = borderWidth
+        profileImageView.layer.borderColor = borderColor
+    }
+    
     private func configureView() {
         profileImageView.layer.cornerRadius = self.frame.height / 2
     }

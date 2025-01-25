@@ -70,6 +70,23 @@ extension ProfileImageViewController: UICollectionViewDelegate, UICollectionView
         
         cell.configureView(profileImageArray[indexPath.item])
         
+        if indexPath.item == selectedProfileImageIndex {
+            cell.configureView(isSelected: true)
+        }
+        
         return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        guard let deSelectedCell = collectionView.cellForItem(
+            at: IndexPath(item: selectedProfileImageIndex, section: 0)
+        ) as? ProfileImageCollectionViewCell else { return }
+        deSelectedCell.configureView(isSelected: false)
+        
+        guard let selectedCell = collectionView.cellForItem(at: indexPath) as? ProfileImageCollectionViewCell else { return }
+        selectedCell.configureView(isSelected: true)
+        selectedProfileImageIndex = indexPath.item
+        
+        configureProfileImage()
     }
 }
