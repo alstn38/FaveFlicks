@@ -8,10 +8,33 @@
 import UIKit
 
 final class CinemaViewController: UIViewController {
+    
+    private let cinemaView = CinemaView()
+    
+    override func loadView() {
+        view = cinemaView
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        view.backgroundColor = .blue
+        
+        configureNavigation()
+    }
+    
+    private func configureNavigation() {
+        let searchButton = UIBarButtonItem(
+            image: UIImage(systemName: "magnifyingglass"),
+            style: .plain,
+            target: self,
+            action: #selector(searchButtonDidTap)
+        )
+        
+        navigationItem.title = StringLiterals.Cinema.title
+        navigationItem.backButtonTitle = StringLiterals.NavigationItem.backButtonTitle
+        navigationItem.rightBarButtonItem = searchButton
+    }
+    
+    @objc private func searchButtonDidTap(_ sender: UIBarButtonItem) {
+        
     }
 }
