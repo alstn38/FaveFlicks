@@ -10,9 +10,11 @@ import UIKit
 
 final class ProfileView: UIView {
     
-    private let randomProfileImage: [UIImage] = [
-        .profile0, .profile1, .profile2, .profile3, .profile4, .profile5, .profile6, .profile7,.profile8,.profile9,.profile10,.profile11
-    ]
+    var image: UIImage? = nil {
+        didSet {
+            profileImageView.image = image
+        }
+    }
     
     private let profileImageView: UIImageView = {
         let imageView = UIImageView()
@@ -63,7 +65,6 @@ final class ProfileView: UIView {
     }
     
     private func configureView(size: CGFloat) {
-        profileImageView.image = randomProfileImage.randomElement() ?? UIImage(resource: .profile0)
         profileImageView.layer.cornerRadius = size / 2
     }
     
