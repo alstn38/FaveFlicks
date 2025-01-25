@@ -86,6 +86,10 @@ final class ProfileNickNameView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    func configureView(image: UIImage) {
+        profileImageView.image = image
+    }
+    
     func configureNickNameStatus(_ status: NickNameStatus) {
         nickNameStatusLabel.text = status.description
     }

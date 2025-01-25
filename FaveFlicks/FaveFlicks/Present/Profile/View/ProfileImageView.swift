@@ -63,6 +63,10 @@ final class ProfileImageView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    func configureView(image: UIImage) {
+        profileImageView.image = image
+    }
+    
     private func configureView() {
         backgroundColor = UIColor(resource: .faveFlicksBlack)
     }
