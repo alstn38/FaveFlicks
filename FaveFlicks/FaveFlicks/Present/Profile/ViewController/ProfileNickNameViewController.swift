@@ -10,6 +10,15 @@ import UIKit
 final class ProfileNickNameViewController: UIViewController {
     
     private let profileNickNameView = ProfileNickNameView()
+    
+    private let profileImageArray: [UIImage] = [
+        .profile0, .profile1, .profile2, .profile3, .profile4, .profile5, .profile6, .profile7,.profile8,.profile9,.profile10,.profile11
+    ]
+    
+    private lazy var selectedProfileImageIndex: Int = {
+        let selectedIndex = Int.random(in: 0..<profileImageArray.count)
+        return selectedIndex
+    }()
 
     override func loadView() {
         view = profileNickNameView
@@ -19,6 +28,7 @@ final class ProfileNickNameViewController: UIViewController {
         super.viewDidLoad()
         
         configureNavigation()
+        configureProfileImage()
         configureTapGestureRecognizer()
         configureTextField()
     }
@@ -32,6 +42,11 @@ final class ProfileNickNameViewController: UIViewController {
         navigationItem.backButtonTitle = StringLiterals.NavigationItem.backButtonTitle
     }
     
+    private func configureProfileImage() {
+        let image = profileImageArray[selectedProfileImageIndex]
+        profileNickNameView.configureView(image: image)
+    }
+    
     private func configureTapGestureRecognizer() {
         let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(profileImageViewDidTap))
         profileNickNameView.profileImageView.addGestureRecognizer(tapGestureRecognizer)
@@ -43,7 +58,10 @@ final class ProfileNickNameViewController: UIViewController {
     }
     
     @objc private func profileImageViewDidTap(_ sender: UIView) {
-        let profileImageViewController = ProfileImageViewController()
+        let profileImageViewController = ProfileImageViewController(
+            selectedProfileImageIndex: selectedProfileImageIndex,
+            profileImageArray: profileImageArray
+        )
         navigationController?.pushViewController(profileImageViewController, animated: true)
     }
     
