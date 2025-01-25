@@ -13,7 +13,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let scene = (scene as? UIWindowScene) else { return }
-        let viewController = ViewController()
+        let viewController = configureInitViewController()
         window = UIWindow(windowScene: scene)
         window?.rootViewController = viewController
         window?.makeKeyAndVisible()
@@ -28,4 +28,14 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func sceneWillEnterForeground(_ scene: UIScene) { }
 
     func sceneDidEnterBackground(_ scene: UIScene) { }
+    
+    private func configureInitViewController() -> UIViewController {
+        
+        switch UserDefaultManager.shared.hasProfile {
+        case true:
+            return FaveFlicksTabBarController()
+        case false:
+            return UINavigationController(rootViewController: OnboardingViewController())
+        }
+    }
 }
