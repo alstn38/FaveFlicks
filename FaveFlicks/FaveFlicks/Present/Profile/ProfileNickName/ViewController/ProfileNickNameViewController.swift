@@ -104,7 +104,20 @@ final class ProfileNickNameViewController: UIViewController {
             return presentAlert(title: StringLiterals.Alert.invalidNickName, message: nickNameStatus.description)
         }
         
-        print(#function)
+        UserDefaultManager.shared.hasProfile = true
+        let faveFlicksTabBarController = FaveFlicksTabBarController()
+        
+        guard
+            let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+            let window = windowScene.windows.first
+        else { return }
+        
+        faveFlicksTabBarController.view.alpha = 0.5
+        UIView.animate(withDuration: 0.4, delay: 0, options: .curveLinear) {
+            faveFlicksTabBarController.view.alpha = 1.0
+        }
+        
+        window.rootViewController = faveFlicksTabBarController
     }
 }
 
