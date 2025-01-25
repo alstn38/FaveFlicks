@@ -7,11 +7,16 @@
 
 import UIKit
 
+protocol ProfileImageViewControllerDelegate: AnyObject {
+    func viewController(_ viewController: UIViewController, didSelectImageIndex: Int)
+}
+
 final class ProfileImageViewController: UIViewController {
     
     private let profileImageView = ProfileImageView()
     private var selectedProfileImageIndex: Int
     private let profileImageArray: [UIImage]
+    weak var delegate: ProfileImageViewControllerDelegate?
 
     override func loadView() {
         view = profileImageView
@@ -88,5 +93,6 @@ extension ProfileImageViewController: UICollectionViewDelegate, UICollectionView
         selectedProfileImageIndex = indexPath.item
         
         configureProfileImage()
+        delegate?.viewController(self, didSelectImageIndex: selectedProfileImageIndex)
     }
 }

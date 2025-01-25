@@ -62,6 +62,7 @@ final class ProfileNickNameViewController: UIViewController {
             selectedProfileImageIndex: selectedProfileImageIndex,
             profileImageArray: profileImageArray
         )
+        profileImageViewController.delegate = self
         navigationController?.pushViewController(profileImageViewController, animated: true)
     }
     
@@ -94,5 +95,14 @@ extension ProfileNickNameViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         view.endEditing(true)
         return true
+    }
+}
+
+// MARK: - ProfileImageViewControllerDelegate
+extension ProfileNickNameViewController: ProfileImageViewControllerDelegate {
+    
+    func viewController(_ viewController: UIViewController, didSelectImageIndex: Int) {
+        selectedProfileImageIndex = didSelectImageIndex
+        configureProfileImage()
     }
 }
