@@ -43,4 +43,9 @@ enum StringLiterals {
     enum ProfileImage {
         static let title: String = "프로필 이미지 설정"
     }
+    
+    enum Cinema {
+        static let title: String = "오늘의 영화"
+        static let movieBoxCount: "개의 무비박스 보관중"
+    }
 }
