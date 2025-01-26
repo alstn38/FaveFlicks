@@ -5,7 +5,7 @@
 //  Created by 강민수 on 1/25/25.
 //
 
-import Foundation
+import UIKit
 
 final class UserDefaultManager {
     
@@ -14,7 +14,23 @@ final class UserDefaultManager {
     private init() { }
     
     private static let hasProfileKey: String = "hasProfileKey"
+    private static let profileImageKey: String = "userProfileKey"
+    private static let nickNameKey: String = "nickNameKey"
+    private static let joinDateKey: String = "joinDateKey"
+    private static let movieBoxCountKey: String = "movieBoxCountKey"
     
-    @UserDefault(key: hasProfileKey, defaultValue: false)
+    @UserDefault(key: profileImageKey, defaultValue: false)
     var hasProfile
+    
+    @UserDefault(key: profileImageKey, defaultValue: UIImage(resource: .profile0))
+    var profileImage
+    
+    @UserDefault(key: nickNameKey, defaultValue: "")
+    var nickName
+    
+    @UserDefault(key: joinDateKey, defaultValue: "")
+    var joinDate
+    
+    @UserDefault(key: movieBoxCountKey, defaultValue: 0)
+    var movieBoxCount
 }
