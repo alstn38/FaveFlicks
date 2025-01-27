@@ -22,6 +22,7 @@ enum StringLiterals {
     enum Alert {
         static let invalidNickName: String = "닉네임이 조건에 맞지 않습니다"
         static let confirm: String = "확인"
+        static let networkError: String = "네트워크 오류"
     }
     
     enum Onboarding {
