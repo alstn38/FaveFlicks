@@ -55,6 +55,29 @@ final class CinemaView: UIView {
         return label
     }()
     
+    private let todayMovieTitleLabel: UILabel = {
+        let label = UILabel()
+        label.text = StringLiterals.Cinema.todayMovieTitle
+        label.font = .systemFont(ofSize: 16, weight: .bold)
+        label.textColor = UIColor(resource: .faveFlicksWhite)
+        label.textAlignment = .center
+        return label
+    }()
+    
+    lazy var todayMovieCollectionView: UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        let insetSpacing: CGFloat = 10
+        let sectionInset: CGFloat = 15
+        layout.scrollDirection = .horizontal
+        layout.minimumInteritemSpacing = insetSpacing
+        layout.sectionInset = UIEdgeInsets(top: 0, left: sectionInset, bottom: 0, right: sectionInset)
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collectionView.showsHorizontalScrollIndicator = false
+        collectionView.showsVerticalScrollIndicator = false
+        collectionView.backgroundColor = UIColor(resource: .faveFlicksBlack)
+        return collectionView
+    }()
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         
@@ -78,7 +101,9 @@ final class CinemaView: UIView {
             recentSearchedTitleLabel,
             recentSearchedDeleteButton,
             recentSearchedCollectionView,
-            noRecentSearchedGuideLabel
+            noRecentSearchedGuideLabel,
+            todayMovieTitleLabel,
+            todayMovieCollectionView
         )
     }
     
@@ -101,11 +126,21 @@ final class CinemaView: UIView {
         recentSearchedCollectionView.snp.makeConstraints {
             $0.top.equalTo(recentSearchedTitleLabel.snp.bottom).offset(15)
             $0.horizontalEdges.equalTo(safeAreaLayoutGuide)
-            $0.height.equalTo(40)
+            $0.height.equalTo(24)
         }
         
         noRecentSearchedGuideLabel.snp.makeConstraints {
             $0.center.equalTo(recentSearchedCollectionView)
+        }
+        
+        todayMovieTitleLabel.snp.makeConstraints {
+            $0.top.equalTo(recentSearchedCollectionView.snp.bottom).offset(15)
+            $0.leading.equalTo(safeAreaLayoutGuide).offset(15)
+        }
+        
+        todayMovieCollectionView.snp.makeConstraints {
+            $0.top.equalTo(todayMovieTitleLabel.snp.bottom).offset(10)
+            $0.horizontalEdges.bottom.equalTo(safeAreaLayoutGuide)
         }
     }
 }
