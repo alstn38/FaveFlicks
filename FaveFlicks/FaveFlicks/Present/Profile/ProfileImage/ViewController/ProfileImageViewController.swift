@@ -15,16 +15,15 @@ final class ProfileImageViewController: UIViewController {
     
     private let profileImageView = ProfileImageView()
     private var selectedProfileImageIndex: Int
-    private let profileImageArray: [UIImage]
+    private let profileImageManager = ProfileImageManager()
     weak var delegate: ProfileImageViewControllerDelegate?
 
     override func loadView() {
         view = profileImageView
     }
     
-    init(selectedProfileImageIndex: Int, profileImageArray: [UIImage]) {
+    init(selectedProfileImageIndex: Int) {
         self.selectedProfileImageIndex = selectedProfileImageIndex
-        self.profileImageArray = profileImageArray
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -46,7 +45,7 @@ final class ProfileImageViewController: UIViewController {
     }
     
     private func configureProfileImage() {
-        let image = profileImageArray[selectedProfileImageIndex]
+        let image = profileImageManager.profileImageArray[selectedProfileImageIndex]
         profileImageView.configureView(image: image)
     }
     
@@ -64,7 +63,7 @@ final class ProfileImageViewController: UIViewController {
 extension ProfileImageViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return profileImageArray.count
+        return profileImageManager.profileImageArray.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -73,7 +72,7 @@ extension ProfileImageViewController: UICollectionViewDelegate, UICollectionView
             for: indexPath
         ) as? ProfileImageCollectionViewCell else { return UICollectionViewCell() }
         
-        cell.configureView(profileImageArray[indexPath.item])
+        cell.configureView(profileImageManager.profileImageArray[indexPath.item])
         
         if indexPath.item == selectedProfileImageIndex {
             cell.configureView(isSelected: true)

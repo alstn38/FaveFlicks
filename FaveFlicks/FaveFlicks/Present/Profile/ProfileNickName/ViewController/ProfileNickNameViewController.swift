@@ -11,14 +11,17 @@ final class ProfileNickNameViewController: UIViewController {
     
     private let profileNickNameView = ProfileNickNameView()
     private var nickNameStatus: ProfileNickNameView.NickNameStatus = .invalidRange
-    
-    private let profileImageArray: [UIImage] = [
-        .profile0, .profile1, .profile2, .profile3, .profile4, .profile5, .profile6, .profile7,.profile8,.profile9,.profile10,.profile11
-    ]
+    private let profileImageManager = ProfileImageManager()
     
     private lazy var selectedProfileImageIndex: Int = {
-        let selectedIndex = Int.random(in: 0..<profileImageArray.count)
+        let selectedIndex = Int.random(in: 0..<profileImageManager.profileImageArray.count)
         return selectedIndex
+    }()
+    
+    private let dateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = StringLiterals.ProfileNickName.joinDateFormatter
+        return formatter
     }()
 
     override func loadView() {
@@ -45,7 +48,7 @@ final class ProfileNickNameViewController: UIViewController {
     }
     
     private func configureProfileImage() {
-        let image = profileImageArray[selectedProfileImageIndex]
+        let image = profileImageManager.profileImageArray[selectedProfileImageIndex]
         profileNickNameView.configureView(image: image)
     }
     
@@ -64,10 +67,7 @@ final class ProfileNickNameViewController: UIViewController {
     }
     
     @objc private func profileImageViewDidTap(_ sender: UIView) {
-        let profileImageViewController = ProfileImageViewController(
-            selectedProfileImageIndex: selectedProfileImageIndex,
-            profileImageArray: profileImageArray
-        )
+        let profileImageViewController = ProfileImageViewController(selectedProfileImageIndex: selectedProfileImageIndex)
         profileImageViewController.delegate = self
         navigationController?.pushViewController(profileImageViewController, animated: true)
     }
@@ -105,6 +105,11 @@ final class ProfileNickNameViewController: UIViewController {
         }
         
         UserDefaultManager.shared.hasProfile = true
+        UserDefaultManager.shared.profileImageIndex = selectedProfileImageIndex
+        print("NickName = \(profileNickNameView.nickNameTextField.text ?? "")")
+        print("joinDate = \(dateFormatter.string(from: Date()))")
+        UserDefaultManager.shared.nickName = profileNickNameView.nickNameTextField.text ?? ""
+        UserDefaultManager.shared.joinDate = dateFormatter.string(from: Date())
         let faveFlicksTabBarController = FaveFlicksTabBarController()
         
         guard

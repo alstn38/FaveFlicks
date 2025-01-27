@@ -14,16 +14,16 @@ final class UserDefaultManager {
     private init() { }
     
     private static let hasProfileKey: String = "hasProfileKey"
-    private static let profileImageKey: String = "userProfileKey"
+    private static let profileImageIndexKey: String = "profileImageIndexKey"
     private static let nickNameKey: String = "nickNameKey"
     private static let joinDateKey: String = "joinDateKey"
     private static let movieBoxCountKey: String = "movieBoxCountKey"
     
-    @UserDefault(key: profileImageKey, defaultValue: false)
+    @UserDefault(key: hasProfileKey, defaultValue: false)
     var hasProfile
     
-    @UserDefault(key: profileImageKey, defaultValue: UIImage(resource: .profile0))
-    var profileImage
+    @UserDefault(key: profileImageIndexKey, defaultValue: 0)
+    var profileImageIndex
     
     @UserDefault(key: nickNameKey, defaultValue: "")
     var nickName
