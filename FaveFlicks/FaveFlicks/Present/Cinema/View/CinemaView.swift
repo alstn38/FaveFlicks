@@ -12,6 +12,47 @@ final class CinemaView: UIView {
     
     let userInfoView = UserInfoView()
     
+    private let recentSearchedTitleLabel: UILabel = {
+        let label = UILabel()
+        label.text = StringLiterals.Cinema.recentSearchedTitle
+        label.font = .systemFont(ofSize: 16, weight: .bold)
+        label.textColor = UIColor(resource: .faveFlicksWhite)
+        label.textAlignment = .center
+        return label
+    }()
+    
+    private let recentSearchedDeleteButton: UIButton = {
+        let button = UIButton()
+        button.setTitle(StringLiterals.Cinema.recentSearchedDelete, for: .normal)
+        button.setTitleColor(UIColor(resource: .faveFlicsMain), for: .normal)
+        button.setTitleColor(UIColor(resource: .faveFlicksGray), for: .highlighted)
+        button.titleLabel?.font = .systemFont(ofSize: 12, weight: .regular)
+        return button
+    }()
+    
+    let recentSearchedCollectionView: UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        let insetSpacing: CGFloat = 10
+        layout.scrollDirection = .horizontal
+        layout.minimumInteritemSpacing = insetSpacing
+        layout.sectionInset = .zero
+        layout.estimatedItemSize = UICollectionViewFlowLayout.automaticSize
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collectionView.showsHorizontalScrollIndicator = false
+        collectionView.showsVerticalScrollIndicator = false
+        collectionView.backgroundColor = UIColor(resource: .faveFlicksBlack)
+        return collectionView
+    }()
+    
+    let noRecentSearchedGuideLabel: UILabel = {
+        let label = UILabel()
+        label.text = StringLiterals.Cinema.noRecentSearchedGuide
+        label.font = .systemFont(ofSize: 11, weight: .regular)
+        label.textColor = UIColor(resource: .faveFlicksGray)
+        label.textAlignment = .center
+        return label
+    }()
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         
@@ -31,7 +72,11 @@ final class CinemaView: UIView {
     
     private func configureHierarchy() {
         addSubviews(
-            userInfoView
+            userInfoView,
+            recentSearchedTitleLabel,
+            recentSearchedDeleteButton,
+            recentSearchedCollectionView,
+            noRecentSearchedGuideLabel
         )
     }
     
@@ -39,6 +84,26 @@ final class CinemaView: UIView {
         userInfoView.snp.makeConstraints {
             $0.top.equalTo(safeAreaLayoutGuide).offset(15)
             $0.centerX.equalToSuperview()
+        }
+        
+        recentSearchedTitleLabel.snp.makeConstraints {
+            $0.top.equalTo(userInfoView.snp.bottom).offset(15)
+            $0.leading.equalTo(safeAreaLayoutGuide).offset(15)
+        }
+        
+        recentSearchedDeleteButton.snp.makeConstraints {
+            $0.centerY.equalTo(recentSearchedTitleLabel)
+            $0.trailing.equalTo(safeAreaLayoutGuide).inset(15)
+        }
+        
+        recentSearchedCollectionView.snp.makeConstraints {
+            $0.top.equalTo(recentSearchedTitleLabel.snp.bottom).offset(15)
+            $0.horizontalEdges.equalTo(safeAreaLayoutGuide)
+            $0.height.equalTo(40)
+        }
+        
+        noRecentSearchedGuideLabel.snp.makeConstraints {
+            $0.center.equalTo(recentSearchedCollectionView)
         }
     }
 }
