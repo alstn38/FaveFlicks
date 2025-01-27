@@ -12,8 +12,9 @@ final class UserInfoView: UIView {
     
     private let profileImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UserDefaultManager.shared.profileImage
+        imageView.image = ProfileImageManager().getCurrentProfileImage()
         imageView.contentMode = .scaleToFill
+        imageView.layer.cornerRadius = 25
         imageView.layer.borderWidth = 3
         imageView.layer.borderColor = UIColor(resource: .faveFlicsMain).cgColor
         imageView.layer.masksToBounds = true
@@ -32,8 +33,8 @@ final class UserInfoView: UIView {
     private let joinDateLabel: UILabel = {
         let label = UILabel()
         label.text = UserDefaultManager.shared.joinDate
-        label.font = .systemFont(ofSize: 12, weight: .regular)
-        label.textColor = UIColor(resource: .faveFlicksLightGray)
+        label.font = .systemFont(ofSize: 11, weight: .regular)
+        label.textColor = UIColor(resource: .faveFlicksGray)
         label.numberOfLines = 1
         return label
     }()
@@ -42,14 +43,14 @@ final class UserInfoView: UIView {
         let imageView = UIImageView()
         imageView.image = UIImage(systemName: "chevron.right")
         imageView.contentMode = .scaleAspectFit
-        imageView.tintColor = UIColor(resource: .faveFlicksLightGray)
+        imageView.tintColor = UIColor(resource: .faveFlicksGray)
         return imageView
     }()
     
     private let movieBoxBackgroundView: UIView = {
         let view = UIView()
-        view.backgroundColor = UIColor(resource: .faveFlicksGray)
-        view.layer.cornerRadius = 10
+        view.backgroundColor = UIColor(resource: .faveFlicsMain)
+        view.layer.cornerRadius = 5
         view.clipsToBounds = true
         return view
     }()
@@ -57,18 +58,18 @@ final class UserInfoView: UIView {
     private let movieBoxCountLabel: UILabel = {
         let label = UILabel()
         label.text = "\(UserDefaultManager.shared.movieBoxCount)" + StringLiterals.Cinema.movieBoxCount
-        label.font = .systemFont(ofSize: 12, weight: .regular)
-        label.textColor = UIColor(resource: .faveFlicksLightGray)
+        label.font = .systemFont(ofSize: 12, weight: .bold)
+        label.textColor = UIColor(resource: .faveFlicksWhite)
         label.numberOfLines = 1
         label.textAlignment = .center
         return label
     }()
 
-    init(size: CGFloat) {
+    init() {
         super.init(frame: .zero)
-        configureView(size: size)
+        configureView()
         configureHierarchy()
-        configureLayout(size: size)
+        configureLayout()
     }
 
     @available(*, unavailable)
@@ -102,24 +103,60 @@ final class UserInfoView: UIView {
             }
         }
     }
-    
-    private func configureView(size: CGFloat) {
-        profileImageView.layer.cornerRadius = size / 2
+         
+    private func configureView() {
+        self.layer.cornerRadius = 20
+        self.isUserInteractionEnabled = true
+        self.backgroundColor = UIColor(resource: .faveFlicksGray).withAlphaComponent(0.5)
     }
     
     private func configureHierarchy() {
         addSubviews(
-            profileImageView
+            profileImageView,
+            nickNameLabel,
+            joinDateLabel,
+            rightChevronImageView,
+            movieBoxBackgroundView,
+            movieBoxCountLabel
         )
     }
     
-    private func configureLayout(size: CGFloat) {
+    private func configureLayout() {
         self.snp.makeConstraints {
-            $0.size.equalTo(size)
+            $0.width.equalTo(UIScreen.main.bounds.width - 30)
         }
         
         profileImageView.snp.makeConstraints {
-            $0.edges.equalToSuperview()
+            $0.top.leading.equalTo(safeAreaLayoutGuide).offset(15)
+            $0.size.equalTo(50)
+        }
+        
+        nickNameLabel.snp.makeConstraints {
+            $0.leading.equalTo(profileImageView.snp.trailing).offset(15)
+            $0.trailing.equalTo(rightChevronImageView.snp.leading).inset(15)
+            $0.bottom.equalTo(profileImageView.snp.centerY)
+        }
+        
+        joinDateLabel.snp.makeConstraints {
+            $0.top.equalTo(profileImageView.snp.centerY).offset(5)
+            $0.leading.equalTo(profileImageView.snp.trailing).offset(15)
+            $0.trailing.equalTo(rightChevronImageView.snp.leading).inset(15)
+        }
+        
+        rightChevronImageView.snp.makeConstraints {
+            $0.centerY.equalTo(profileImageView)
+            $0.trailing.equalTo(safeAreaLayoutGuide).inset(15)
+            $0.size.equalTo(20)
+        }
+        
+        movieBoxBackgroundView.snp.makeConstraints {
+            $0.top.equalTo(profileImageView.snp.bottom).offset(15)
+            $0.horizontalEdges.bottom.equalTo(safeAreaLayoutGuide).inset(15)
+            $0.height.equalTo(35)
+        }
+        
+        movieBoxCountLabel.snp.makeConstraints {
+            $0.center.equalTo(movieBoxBackgroundView)
         }
     }
 }

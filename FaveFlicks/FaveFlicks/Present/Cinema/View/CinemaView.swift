@@ -10,6 +10,8 @@ import UIKit
 
 final class CinemaView: UIView {
     
+    let userInfoView = UserInfoView()
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         
@@ -28,10 +30,15 @@ final class CinemaView: UIView {
     }
     
     private func configureHierarchy() {
-
+        addSubviews(
+            userInfoView
+        )
     }
     
     private func configureLayout() {
-        
+        userInfoView.snp.makeConstraints {
+            $0.top.equalTo(safeAreaLayoutGuide).offset(15)
+            $0.centerX.equalToSuperview()
+        }
     }
 }
