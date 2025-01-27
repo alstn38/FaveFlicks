@@ -26,16 +26,17 @@ final class CinemaView: UIView {
         button.setTitle(StringLiterals.Cinema.recentSearchedDelete, for: .normal)
         button.setTitleColor(UIColor(resource: .faveFlicsMain), for: .normal)
         button.setTitleColor(UIColor(resource: .faveFlicksGray), for: .highlighted)
-        button.titleLabel?.font = .systemFont(ofSize: 12, weight: .regular)
+        button.titleLabel?.font = .systemFont(ofSize: 12, weight: .bold)
         return button
     }()
     
     let recentSearchedCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         let insetSpacing: CGFloat = 10
+        let sectionInset: CGFloat = 15
         layout.scrollDirection = .horizontal
         layout.minimumInteritemSpacing = insetSpacing
-        layout.sectionInset = .zero
+        layout.sectionInset = UIEdgeInsets(top: 0, left: sectionInset, bottom: 0, right: sectionInset)
         layout.estimatedItemSize = UICollectionViewFlowLayout.automaticSize
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.showsHorizontalScrollIndicator = false
@@ -50,6 +51,7 @@ final class CinemaView: UIView {
         label.font = .systemFont(ofSize: 11, weight: .regular)
         label.textColor = UIColor(resource: .faveFlicksGray)
         label.textAlignment = .center
+        label.isHidden = true
         return label
     }()
     
