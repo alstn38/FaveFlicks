@@ -38,6 +38,7 @@ enum StringLiterals {
         static let invalidRangeStatus: String = "2글자 이상 10글자 미만으로 설정해주세요"
         static let hasSectionSignStatus: String = "닉네임에 @, #, $, %는 포함할 수 없어요"
         static let hasNumberStatus: String = "닉네임에 숫자는 포함할 수 없어요"
+        static let joinDateFormatter: String = "yy.MM.dd 가입"
     }
     
     enum ProfileImage {
@@ -46,6 +47,10 @@ enum StringLiterals {
     
     enum Cinema {
         static let title: String = "오늘의 영화"
-        static let movieBoxCount: "개의 무비박스 보관중"
+        static let movieBoxCount: String = "개의 무비박스 보관중"
+        static let recentSearchedTitle: String = "최근검색어"
+        static let recentSearchedDelete: String = "전체 삭제"
+        static let noRecentSearchedGuide: String = "최근 검색어 내역이 없습니다."
+        static let todayMovieTitle: String = "오늘의 영화"
     }
 }
