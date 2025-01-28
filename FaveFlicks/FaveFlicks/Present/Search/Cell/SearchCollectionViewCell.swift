@@ -62,7 +62,7 @@ final class SearchCollectionViewCell: UICollectionViewCell {
     
     private let lineView: UIView = {
         let view = UIView()
-        view.backgroundColor = UIColor(resource: .faveFlicksGray)
+        view.backgroundColor = UIColor(resource: .faveFlicksGray).withAlphaComponent(0.3)
         return view
     }()
     
@@ -71,6 +71,14 @@ final class SearchCollectionViewCell: UICollectionViewCell {
         
         configureHierarchy()
         configureLayout()
+    }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        
+        genreStackView.arrangedSubviews.forEach {
+            $0.removeFromSuperview()
+        }
     }
     
     @available(*, unavailable)
