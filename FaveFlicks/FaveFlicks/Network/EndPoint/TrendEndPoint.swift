@@ -25,7 +25,7 @@ extension TrendEndPoint {
     var path: String {
         switch self {
         case .movie:
-            return "/day"
+            return "/trending/movie/day"
         }
     }
     
