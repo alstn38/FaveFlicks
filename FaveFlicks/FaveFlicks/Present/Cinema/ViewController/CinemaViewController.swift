@@ -72,7 +72,8 @@ final class CinemaViewController: UIViewController {
     }
     
     @objc private func searchButtonDidTap(_ sender: UIBarButtonItem) {
-        
+        let searchViewController = SearchViewController()
+        navigationController?.pushViewController(searchViewController, animated: true)
     }
 }
 
