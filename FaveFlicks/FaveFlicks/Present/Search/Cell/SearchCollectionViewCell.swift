@@ -90,8 +90,12 @@ final class SearchCollectionViewCell: UICollectionViewCell {
         movieTitleLabel.text = detailMovie.title
         movieDateLabel.text = detailMovie.releaseDate
         
-        let url = URL(string: Secret.imageURL + detailMovie.posterPath)
-        posterImageView.kf.setImage(with: url)
+        if let posterPath = detailMovie.posterPath {
+            let url = URL(string: Secret.imageURL + posterPath)
+            posterImageView.kf.setImage(with: url)
+        } else {
+            posterImageView.image = UIImage(resource: .splash)
+        }
         
         configureGenreView(detailMovie.genreIDArray)
     }

@@ -69,8 +69,12 @@ final class TodayMovieCollectionViewCell: UICollectionViewCell {
         movieTitleLabel.text = trendMovie.title
         movieDescriptionLabel.text = trendMovie.overview
         
-        let url = URL(string: Secret.imageURL + trendMovie.posterPath)
-        posterImageView.kf.setImage(with: url)
+        if let posterPath = trendMovie.posterPath {
+            let url = URL(string: Secret.imageURL + posterPath)
+            posterImageView.kf.setImage(with: url)
+        } else {
+            posterImageView.image = UIImage(resource: .splash)
+        }
     }
     
     private func configureHierarchy() {
