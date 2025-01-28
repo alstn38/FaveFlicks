@@ -6,6 +6,8 @@
 	<string>$(ACCESS_TOKEN)</string>
 	<key>BASE_URL</key>
 	<string>$(BASE_URL)</string>
+	<key>IMAGE_URL</key>
+	<string>$(IMAGE_URL)</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

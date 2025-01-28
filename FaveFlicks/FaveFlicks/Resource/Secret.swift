@@ -21,4 +21,11 @@ enum Secret {
         }
         return accessToken
     }()
+    
+    static let imageURL: String = {
+        guard let urlString = Bundle.main.infoDictionary?["IMAGE_URL"] as? String else {
+            fatalError("IMAGE_URL ERROR")
+        }
+        return urlString
+    }()
 }
