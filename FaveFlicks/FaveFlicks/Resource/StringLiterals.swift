@@ -54,4 +54,10 @@ enum StringLiterals {
         static let noRecentSearchedGuide: String = "최근 검색어 내역이 없습니다."
         static let todayMovieTitle: String = "오늘의 영화"
     }
+    
+    enum Search {
+        static let title: String = "영화 검색"
+        static let searchPlaceholder: String = "영화를 검색해보세요."
+        static let noResultText: String = "원하는 검색결과를 찾지 못했습니다."
+    }
 }
