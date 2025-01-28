@@ -87,7 +87,7 @@ final class SearchView: UIView {
         }
         
         searchCollectionView.snp.makeConstraints {
-            $0.top.equalTo(searchBar.snp.bottom).offset(10)
+            $0.top.equalTo(searchBar.snp.bottom)
             $0.horizontalEdges.bottom.equalTo(safeAreaLayoutGuide)
         }
     }
