@@ -14,11 +14,11 @@ struct TrendMovie: Codable {
 
 // MARK: - Result
 struct DetailMovie: Codable {
-    let backdropPath: String
+    let backdropPath: String?
     let id: Int
     let title: String
     let overview: String
-    let posterPath: String
+    let posterPath: String?
     let genreIDArray: [Int]
     let releaseDate: String
     let voteAverage: Double
