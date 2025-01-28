@@ -16,6 +16,9 @@ final class SearchViewController: UIViewController {
     
     private var searchedMovieArray: [DetailMovie] = [] {
         didSet {
+            let isEmptySearchedMovieArray = searchedMovieArray.isEmpty
+            searchView.searchCollectionView.isHidden = isEmptySearchedMovieArray
+            searchView.noSearchResultLabel.isHidden = !isEmptySearchedMovieArray
             searchView.searchCollectionView.reloadData()
         }
     }

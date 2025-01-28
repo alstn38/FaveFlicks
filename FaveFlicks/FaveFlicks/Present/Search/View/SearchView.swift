@@ -32,6 +32,7 @@ final class SearchView: UIView {
         label.numberOfLines = 1
         label.font = .systemFont(ofSize: 12, weight: .regular)
         label.textColor = UIColor(resource: .faveFlicksGray)
+        label.isHidden = true
         return label
     }()
     
@@ -48,6 +49,7 @@ final class SearchView: UIView {
         collectionView.showsVerticalScrollIndicator = false
         collectionView.keyboardDismissMode = .onDrag
         collectionView.backgroundColor = UIColor(resource: .faveFlicksBlack)
+        collectionView.isHidden = true
         return collectionView
     }()
     
