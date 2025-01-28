@@ -13,7 +13,7 @@ final class SearchView: UIView {
     let searchBar: UISearchBar = {
         let searchBar = UISearchBar()
         searchBar.searchTextField.leftView?.tintColor = UIColor(resource: .faveFlicksLightGray)
-        searchBar.searchTextField.backgroundColor = UIColor(resource: .faveFlicksBlack)
+        searchBar.searchTextField.backgroundColor = UIColor(resource: .faveFlicksGray).withAlphaComponent(0.3)
         searchBar.backgroundColor = UIColor(resource: .faveFlicksBlack)
         searchBar.barTintColor = UIColor(resource: .faveFlicksBlack)
         searchBar.tintColor = UIColor(resource: .faveFlicksWhite)
