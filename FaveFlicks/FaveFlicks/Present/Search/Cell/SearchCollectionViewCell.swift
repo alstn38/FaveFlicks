@@ -22,7 +22,6 @@ final class SearchCollectionViewCell: UICollectionViewCell {
         label.font = .systemFont(ofSize: 16, weight: .bold)
         label.textColor = UIColor(resource: .faveFlicksWhite)
         label.numberOfLines = 2
-        label.text = "엄청긴글엄청긴글엄청긴글엄청긴글엄청긴글엄청긴글엄청긴글엄청긴글엄청긴글엄청긴글엄청긴글엄청긴글엄청긴글엄청긴글엄청긴글엄청긴글엄청긴글엄청긴글"
         return label
     }()
     
@@ -31,7 +30,6 @@ final class SearchCollectionViewCell: UICollectionViewCell {
         label.font = .systemFont(ofSize: 12, weight: .regular)
         label.textColor = UIColor(resource: .faveFlicksLightGray)
         label.numberOfLines = 1
-        label.text = "엄청긴글엄청긴글엄청긴글엄청긴글엄청긴글엄청긴글엄청긴글엄청긴글엄청긴글엄청긴글엄청긴글엄청긴글엄청긴글엄청긴글엄청긴글엄청긴글엄청긴글엄청긴글"
         return label
     }()
     
@@ -78,6 +76,25 @@ final class SearchCollectionViewCell: UICollectionViewCell {
     @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    func configureCell(_ detailMovie: DetailMovie) {
+        movieTitleLabel.text = detailMovie.title
+        movieDateLabel.text = detailMovie.releaseDate
+        
+        let url = URL(string: Secret.imageURL + detailMovie.posterPath)
+        posterImageView.kf.setImage(with: url)
+        
+        configureGenreView(detailMovie.genreIDArray)
+    }
+    
+    private func configureGenreView(_ genreIDArray: [Int]) {
+        let maxCount = min(2, genreIDArray.count)
+        
+        for i in 0..<maxCount {
+            let genreView = GenreView(genre: genreIDArray[i])
+            genreStackView.addArrangedSubview(genreView)
+        }
     }
     
     private func configureHierarchy() {

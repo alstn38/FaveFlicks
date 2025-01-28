@@ -10,6 +10,14 @@ import UIKit
 final class SearchViewController: UIViewController {
     
     private let searchView = SearchView()
+    private var currentPage: Int = 1
+    private var totalPage: Int = 1
+    
+    private var searchedMovieArray: [DetailMovie] = [] {
+        didSet {
+            searchView.searchCollectionView.reloadData()
+        }
+    }
 
     override func loadView() {
         view = searchView
@@ -19,12 +27,22 @@ final class SearchViewController: UIViewController {
         super.viewDidLoad()
         
         configureNavigation()
+        configureSearchBar()
         configureCollectionView()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        searchView.searchBar.becomeFirstResponder()
     }
     
     private func configureNavigation() {
         navigationItem.backButtonTitle = StringLiterals.NavigationItem.backButtonTitle
         navigationItem.title = StringLiterals.Search.title
+    }
+    
+    private func configureSearchBar() {
+        searchView.searchBar.delegate = self
     }
     
     private func configureCollectionView() {
@@ -35,13 +53,45 @@ final class SearchViewController: UIViewController {
             forCellWithReuseIdentifier: SearchCollectionViewCell.identifier
         )
     }
+    
+    private func fetchSearchedMovie(query: String, page: Int) {
+        let endPoint = SearchEndPoint.movie(query: query, page: page)
+        NetworkService.shared.request(endPoint: endPoint, responseType: SearchMovie.self) { [weak self] response in
+            guard let self else { return }
+            switch response {
+            case .success(let value):
+                updateMovieArray(value)
+            case .failure(let error):
+                self.presentAlert(title: StringLiterals.Alert.networkError, message: error.description)
+            }
+        }
+    }
+    
+    private func updateMovieArray(_ searchMovie: SearchMovie) {
+        if currentPage == 1 {
+            totalPage = searchMovie.totalPages
+            searchedMovieArray = searchMovie.results
+        } else {
+            searchedMovieArray.append(contentsOf: searchMovie.results)
+        }
+    }
+}
+
+// MARK: - UISearchBarDelegate
+extension SearchViewController: UISearchBarDelegate {
+    
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        view.endEditing(true)
+        guard let searchedText = searchBar.text else { return }
+        fetchSearchedMovie(query: searchedText, page: currentPage)
+    }
 }
 
 // MARK: - UICollectionViewDelegate, UICollectionViewDataSource
 extension SearchViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 10
+        return searchedMovieArray.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -50,6 +100,7 @@ extension SearchViewController: UICollectionViewDelegate, UICollectionViewDataSo
             for: indexPath
         ) as? SearchCollectionViewCell else { return UICollectionViewCell() }
         
+        cell.configureCell(searchedMovieArray[indexPath.item])
         return cell
     }
 }
