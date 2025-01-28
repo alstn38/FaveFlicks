@@ -5,6 +5,7 @@
 //  Created by 강민수 on 1/27/25.
 //
 
+import Kingfisher
 import SnapKit
 import UIKit
 
@@ -13,14 +14,14 @@ final class TodayMovieCollectionViewCell: UICollectionViewCell {
     private let posterImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleToFill
-        imageView.backgroundColor = .gray // TODO: 이후 삭제
+        imageView.layer.cornerRadius = 10
+        imageView.clipsToBounds = true
         return imageView
     }()
     
     private let movieTitleLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 16, weight: .bold)
-        label.text = "엄청길게엄청길게엄청길게엄청길게엄청길게엄청길게엄청길게엄청길게엄청길게엄청길게엄청길게엄청길게엄청길게엄청길게엄청길게엄청길게엄청길게엄청길게엄청길게엄청길게엄청길게" // TODO: 삭제
         label.textColor = UIColor(resource: .faveFlicksWhite)
         label.numberOfLines = 1
         return label
@@ -47,7 +48,6 @@ final class TodayMovieCollectionViewCell: UICollectionViewCell {
     private let movieDescriptionLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 11, weight: .regular)
-        label.text = "엄청길길게엄청길길게엄청엄청길길게엄청엄청길길게엄청엄청길길게엄청엄청길길게엄청엄청길길게엄청엄청길길게엄청엄청길길게엄청엄청길게" // TODO: 삭제
         label.textColor = UIColor(resource: .faveFlicksLightGray)
         label.numberOfLines = 2
         return label
@@ -63,6 +63,14 @@ final class TodayMovieCollectionViewCell: UICollectionViewCell {
     @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    func configureCell(_ trendMovie: DetailMovie) {
+        movieTitleLabel.text = trendMovie.title
+        movieDescriptionLabel.text = trendMovie.overview
+        
+        let url = URL(string: Secret.imageURL + trendMovie.posterPath)
+        posterImageView.kf.setImage(with: url)
     }
     
     private func configureHierarchy() {

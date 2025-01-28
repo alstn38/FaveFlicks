@@ -11,6 +11,11 @@ final class CinemaViewController: UIViewController {
     
     private let cinemaView = CinemaView()
     private let sampleRecentSearched: [String] = ["현빈", "스파이더", "해리포터", "소방관", "크리스마스"]
+    private var trendMovieArray: [DetailMovie] = [] {
+        didSet {
+            cinemaView.todayMovieCollectionView.reloadData()
+        }
+    }
     
     override func loadView() {
         view = cinemaView
@@ -21,6 +26,7 @@ final class CinemaViewController: UIViewController {
         
         configureNavigation()
         configureCollectionView()
+        fetchTrendMovie()
     }
     
     private func configureNavigation() {
@@ -52,6 +58,19 @@ final class CinemaViewController: UIViewController {
         )
     }
     
+    private func fetchTrendMovie() {
+        let endPoint = TrendEndPoint.movie
+        NetworkService.shared.request(endPoint: endPoint, responseType: TrendMovie.self) { [weak self] response in
+            guard let self else { return }
+            switch response {
+            case .success(let value):
+                trendMovieArray = value.results
+            case .failure(let error):
+                self.presentAlert(title: StringLiterals.Alert.networkError, message: error.description)
+            }
+        }
+    }
+    
     @objc private func searchButtonDidTap(_ sender: UIBarButtonItem) {
         
     }
@@ -66,7 +85,7 @@ extension CinemaViewController: UICollectionViewDelegate, UICollectionViewDataSo
             return sampleRecentSearched.count
             
         case cinemaView.todayMovieCollectionView:
-            return 10
+            return trendMovieArray.count
             
         default:
             return 0
@@ -89,6 +108,8 @@ extension CinemaViewController: UICollectionViewDelegate, UICollectionViewDataSo
                 withReuseIdentifier: TodayMovieCollectionViewCell.identifier,
                 for: indexPath
             ) as? TodayMovieCollectionViewCell else { return UICollectionViewCell() }
+            
+            cell.configureCell(trendMovieArray[indexPath.item])
             
             return cell
             
