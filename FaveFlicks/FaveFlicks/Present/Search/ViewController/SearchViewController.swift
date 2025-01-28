@@ -10,6 +10,7 @@ import UIKit
 final class SearchViewController: UIViewController {
     
     private let searchView = SearchView()
+    private var searchedText: String?
     private var currentPage: Int = 1
     private var totalPage: Int = 1
     
@@ -83,6 +84,7 @@ extension SearchViewController: UISearchBarDelegate {
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         view.endEditing(true)
         guard let searchedText = searchBar.text else { return }
+        self.searchedText = searchedText
         fetchSearchedMovie(query: searchedText, page: currentPage)
     }
 }
@@ -102,5 +104,16 @@ extension SearchViewController: UICollectionViewDelegate, UICollectionViewDataSo
         
         cell.configureCell(searchedMovieArray[indexPath.item])
         return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        guard currentPage < totalPage else { return }
+        guard let searchedText else { return }
+        
+        if searchedMovieArray.count - 2 == indexPath.item {
+            currentPage += 1
+            
+            fetchSearchedMovie(query: searchedText, page: currentPage)
+        }
     }
 }
