@@ -119,6 +119,20 @@ extension CinemaViewController: UICollectionViewDelegate, UICollectionViewDataSo
         }
     }
     
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        switch collectionView {
+        case cinemaView.recentSearchedCollectionView:
+            return
+        case cinemaView.todayMovieCollectionView:
+            let detailMovie = trendMovieArray[indexPath.item]
+            let detailMovieViewController = DetailMovieViewController(detailMovie: detailMovie)
+            navigationController?.pushViewController(detailMovieViewController, animated: true)
+            
+        default:
+            return
+        }
+    }
+    
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         switch collectionView {
         case cinemaView.todayMovieCollectionView:

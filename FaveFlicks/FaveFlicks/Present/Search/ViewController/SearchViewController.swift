@@ -109,6 +109,12 @@ extension SearchViewController: UICollectionViewDelegate, UICollectionViewDataSo
         return cell
     }
     
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let detailMovie = searchedMovieArray[indexPath.item]
+        let detailMovieViewController = DetailMovieViewController(detailMovie: detailMovie)
+        navigationController?.pushViewController(detailMovieViewController, animated: true)
+    }
+    
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         guard currentPage < totalPage else { return }
         guard let searchedText else { return }
