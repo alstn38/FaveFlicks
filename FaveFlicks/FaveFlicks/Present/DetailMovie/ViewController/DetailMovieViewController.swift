@@ -30,6 +30,7 @@ final class DetailMovieViewController: UIViewController {
         super.viewDidLoad()
         
         configureNavigation()
+        configureCollectionView()
     }
     
     private func configureNavigation() {
@@ -44,7 +45,81 @@ final class DetailMovieViewController: UIViewController {
         navigationItem.rightBarButtonItem = favoriteButton
     }
     
+    private func configureCollectionView() {
+        detailMovieView.backdropCollectionView.delegate = self
+        detailMovieView.backdropCollectionView.dataSource = self
+        detailMovieView.backdropCollectionView.register(
+            BackdropCollectionViewCell.self,
+            forCellWithReuseIdentifier: BackdropCollectionViewCell.identifier
+        )
+        
+        detailMovieView.castCollectionView.delegate = self
+        detailMovieView.castCollectionView.dataSource = self
+        detailMovieView.castCollectionView.register(
+            CastCollectionViewCell.self,
+            forCellWithReuseIdentifier: CastCollectionViewCell.identifier
+        )
+        
+        detailMovieView.posterCollectionView.delegate = self
+        detailMovieView.posterCollectionView.dataSource = self
+        detailMovieView.posterCollectionView.register(
+            PosterCollectionViewCell.self,
+            forCellWithReuseIdentifier: PosterCollectionViewCell.identifier
+        )
+    }
+    
     @objc private func favoriteButtonDidTap(_ sender: UIBarButtonItem) {
         
+    }
+}
+
+// MARK: - UICollectionViewDelegate, UICollectionViewDataSource
+extension DetailMovieViewController: UICollectionViewDelegate, UICollectionViewDataSource {
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        switch collectionView {
+        case detailMovieView.backdropCollectionView:
+            return 10
+            
+        case detailMovieView.castCollectionView:
+            return 10
+            
+        case detailMovieView.posterCollectionView:
+            return 10
+            
+        default:
+            return 0
+        }
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        switch collectionView {
+        case detailMovieView.backdropCollectionView:
+            guard let cell = collectionView.dequeueReusableCell(
+                withReuseIdentifier: BackdropCollectionViewCell.identifier,
+                for: indexPath
+            ) as? BackdropCollectionViewCell else { return UICollectionViewCell() }
+            
+            return cell
+            
+        case detailMovieView.castCollectionView:
+            guard let cell = collectionView.dequeueReusableCell(
+                withReuseIdentifier: CastCollectionViewCell.identifier,
+                for: indexPath
+            ) as? CastCollectionViewCell else { return UICollectionViewCell() }
+            
+            return cell
+            
+        case detailMovieView.posterCollectionView:
+            guard let cell = collectionView.dequeueReusableCell(
+                withReuseIdentifier: PosterCollectionViewCell.identifier,
+                for: indexPath
+            ) as? PosterCollectionViewCell else { return UICollectionViewCell() }
+            
+            return cell
+            
+        default:
+            return UICollectionViewCell()
+        }
     }
 }
