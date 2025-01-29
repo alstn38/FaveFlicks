@@ -60,4 +60,12 @@ enum StringLiterals {
         static let searchPlaceholder: String = "영화를 검색해보세요."
         static let noResultText: String = "원하는 검색결과를 찾지 못했습니다."
     }
+    
+    enum DetailMovie {
+        static let synopsisTitle: String = "Synopsis"
+        static let moreButtonTitle: String = "More"
+        static let hideButtonTitle: String = "Hide"
+        static let castTitle: String = "Cast"
+        static let posterTitle: String = "Poster"
+    }
 }
