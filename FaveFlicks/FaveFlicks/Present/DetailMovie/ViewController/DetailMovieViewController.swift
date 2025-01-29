@@ -11,6 +11,17 @@ final class DetailMovieViewController: UIViewController {
     
     private let detailMovieView = DetailMovieView()
     private let detailMovie: DetailMovie
+    private var backdropImageArray: [DetailImage] = [] {
+        didSet {
+            detailMovieView.backdropCollectionView.reloadData()
+        }
+    }
+    
+    private var posterImageArray: [DetailImage] = [] {
+        didSet {
+            detailMovieView.posterCollectionView.reloadData()
+        }
+    }
     
     init(detailMovie: DetailMovie) {
         self.detailMovie = detailMovie
@@ -31,6 +42,7 @@ final class DetailMovieViewController: UIViewController {
         
         configureNavigation()
         configureCollectionView()
+        fetchMovieImage(movieID: detailMovie.id)
     }
     
     private func configureNavigation() {
@@ -68,6 +80,22 @@ final class DetailMovieViewController: UIViewController {
         )
     }
     
+    private func fetchMovieImage(movieID: Int) {
+        let endPoint = MovieImageEndPoint.movie(movieID: movieID)
+        print(endPoint.url)
+        NetworkService.shared.request(endPoint: endPoint, responseType: MovieImage.self) { [weak self] response in
+            guard let self else { return }
+            switch response {
+            case .success(let value):
+                dump(value)
+                self.backdropImageArray = value.backdrops
+                self.posterImageArray = value.posters
+            case .failure(let error):
+                self.presentAlert(title: StringLiterals.Alert.networkError, message: error.description)
+            }
+        }
+    }
+    
     @objc private func favoriteButtonDidTap(_ sender: UIBarButtonItem) {
         
     }
@@ -79,13 +107,13 @@ extension DetailMovieViewController: UICollectionViewDelegate, UICollectionViewD
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         switch collectionView {
         case detailMovieView.backdropCollectionView:
-            return 10
+            return backdropImageArray.count
             
         case detailMovieView.castCollectionView:
             return 10
             
         case detailMovieView.posterCollectionView:
-            return 10
+            return posterImageArray.count
             
         default:
             return 0
@@ -100,6 +128,7 @@ extension DetailMovieViewController: UICollectionViewDelegate, UICollectionViewD
                 for: indexPath
             ) as? BackdropCollectionViewCell else { return UICollectionViewCell() }
             
+            cell.configureCell(backdropImageArray[indexPath.item])
             return cell
             
         case detailMovieView.castCollectionView:
@@ -116,6 +145,7 @@ extension DetailMovieViewController: UICollectionViewDelegate, UICollectionViewD
                 for: indexPath
             ) as? PosterCollectionViewCell else { return UICollectionViewCell() }
             
+            cell.configureCell(posterImageArray[indexPath.item])
             return cell
             
         default:
