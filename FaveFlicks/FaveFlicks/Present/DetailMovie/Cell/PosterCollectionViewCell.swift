@@ -5,6 +5,7 @@
 //  Created by 강민수 on 1/29/25.
 //
 
+import Kingfisher
 import SnapKit
 import UIKit
 
@@ -26,6 +27,11 @@ final class PosterCollectionViewCell: UICollectionViewCell {
     @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    func configureCell(_ detailImage: DetailImage) {
+        let url = URL(string: Secret.imageURL + detailImage.filePath)
+        posterImageView.kf.setImage(with: url)
     }
     
     private func configureHierarchy() {
