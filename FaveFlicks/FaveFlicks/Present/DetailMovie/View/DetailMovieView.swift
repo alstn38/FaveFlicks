@@ -124,13 +124,15 @@ final class DetailMovieView: UIView {
     let moreHideButton: UIButton = {
         let button = UIButton()
         button.setTitle(StringLiterals.DetailMovie.moreButtonTitle, for: .normal)
+        button.setTitle(StringLiterals.DetailMovie.hideButtonTitle, for: .selected)
         button.setTitleColor(UIColor(resource: .faveFlicsMain), for: .normal)
         button.setTitleColor(UIColor(resource: .faveFlicksGray), for: .highlighted)
+        button.setTitleColor(UIColor(resource: .faveFlicsMain), for: .selected)
         button.titleLabel?.font = .systemFont(ofSize: 14, weight: .bold)
         return button
     }()
     
-    private let synopsisDescriptionLabel: UILabel = {
+    let synopsisDescriptionLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 12, weight: .regular)
         label.textColor = UIColor(resource: .faveFlicksWhite)
@@ -204,7 +206,9 @@ final class DetailMovieView: UIView {
         
         let genreArray = detailMovie.genreIDArray.map { GenreType(num: $0).description }
         genreLabel.text = genreArray.joined(separator: StringLiterals.DetailMovie.comma)
-        synopsisDescriptionLabel.text = detailMovie.overview
+        
+        let overview = !detailMovie.overview.isEmpty ? detailMovie.overview : StringLiterals.DetailMovie.emptySynopsis
+        synopsisDescriptionLabel.text = overview
     }
     
     func configurePageControl(numberOfPages: Int) {

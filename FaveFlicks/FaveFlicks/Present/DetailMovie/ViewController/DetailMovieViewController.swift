@@ -48,6 +48,7 @@ final class DetailMovieViewController: UIViewController {
         
         configureNavigation()
         configureCollectionView()
+        configureAddTarget()
         detailMovieView.configureView(detailMovie)
         fetchMovieImage(movieID: detailMovie.id)
         fetchCredit(movieID: detailMovie.id)
@@ -88,6 +89,10 @@ final class DetailMovieViewController: UIViewController {
         )
     }
     
+    private func configureAddTarget() {
+        detailMovieView.moreHideButton.addTarget(self, action: #selector(moreHideButtonDidTap), for: .touchUpInside)
+    }
+    
     private func fetchMovieImage(movieID: Int) {
         let endPoint = MovieImageEndPoint.movie(movieID: movieID)
         NetworkService.shared.request(endPoint: endPoint, responseType: MovieImage.self) { [weak self] response in
@@ -118,6 +123,12 @@ final class DetailMovieViewController: UIViewController {
     
     @objc private func favoriteButtonDidTap(_ sender: UIBarButtonItem) {
         
+    }
+    
+    @objc private func moreHideButtonDidTap(_ sender: UIButton) {
+        let numberOfLines: Int = sender.isSelected ? 3 : 0
+        detailMovieView.synopsisDescriptionLabel.numberOfLines = numberOfLines
+        sender.isSelected.toggle()
     }
 }
 
