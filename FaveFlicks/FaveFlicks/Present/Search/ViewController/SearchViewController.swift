@@ -13,6 +13,7 @@ final class SearchViewController: UIViewController {
     private var searchedText: String?
     private var currentPage: Int = 1
     private var totalPage: Int = 1
+    private var isRecentSearchResult: Bool = false
     
     private var searchedMovieArray: [DetailMovie] = [] {
         didSet {
@@ -37,12 +38,22 @@ final class SearchViewController: UIViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        searchView.searchBar.becomeFirstResponder()
+        configureResponder()
+    }
+    
+    func configureRecentSearchResult(searchedText: String) {
+        isRecentSearchResult = true
+        fetchSearchedMovie(query: searchedText, page: currentPage)
     }
     
     private func configureNavigation() {
         navigationItem.backButtonTitle = StringLiterals.NavigationItem.backButtonTitle
         navigationItem.title = StringLiterals.Search.title
+    }
+    
+    private func configureResponder() {
+        guard !isRecentSearchResult else { return }
+        searchView.searchBar.becomeFirstResponder()
     }
     
     private func configureSearchBar() {

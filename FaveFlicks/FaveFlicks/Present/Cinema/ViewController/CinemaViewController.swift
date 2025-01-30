@@ -197,7 +197,11 @@ extension CinemaViewController: UICollectionViewDelegate, UICollectionViewDataSo
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         switch collectionView {
         case cinemaView.recentSearchedCollectionView:
-            return
+            let recentSearchedText = recentSearchTextArray[indexPath.item]
+            let searchViewController = SearchViewController()
+            searchViewController.configureRecentSearchResult(searchedText: recentSearchedText)
+            navigationController?.pushViewController(searchViewController, animated: true)
+            
         case cinemaView.todayMovieCollectionView:
             let detailMovie = trendMovieArray[indexPath.item]
             let detailMovieViewController = DetailMovieViewController(detailMovie: detailMovie)
