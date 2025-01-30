@@ -17,6 +17,12 @@ final class DetailMovieViewController: UIViewController {
         }
     }
     
+    private var castArray: [Cast] = [] {
+        didSet {
+            detailMovieView.castCollectionView.reloadData()
+        }
+    }
+    
     private var posterImageArray: [DetailImage] = [] {
         didSet {
             detailMovieView.posterCollectionView.reloadData()
@@ -43,6 +49,7 @@ final class DetailMovieViewController: UIViewController {
         configureNavigation()
         configureCollectionView()
         fetchMovieImage(movieID: detailMovie.id)
+        fetchCredit(movieID: detailMovie.id)
     }
     
     private func configureNavigation() {
@@ -82,14 +89,25 @@ final class DetailMovieViewController: UIViewController {
     
     private func fetchMovieImage(movieID: Int) {
         let endPoint = MovieImageEndPoint.movie(movieID: movieID)
-        print(endPoint.url)
         NetworkService.shared.request(endPoint: endPoint, responseType: MovieImage.self) { [weak self] response in
             guard let self else { return }
             switch response {
             case .success(let value):
-                dump(value)
-                self.backdropImageArray = value.backdrops
+                self.backdropImageArray = Array(value.backdrops.prefix(3))
                 self.posterImageArray = value.posters
+            case .failure(let error):
+                self.presentAlert(title: StringLiterals.Alert.networkError, message: error.description)
+            }
+        }
+    }
+    
+    private func fetchCredit(movieID: Int) {
+        let endPoint = CreditEndPoint.movie(movieID: movieID)
+        NetworkService.shared.request(endPoint: endPoint, responseType: Credit.self) { [weak self] response in
+            guard let self else { return }
+            switch response {
+            case .success(let value):
+                self.castArray = value.cast
             case .failure(let error):
                 self.presentAlert(title: StringLiterals.Alert.networkError, message: error.description)
             }
@@ -110,7 +128,7 @@ extension DetailMovieViewController: UICollectionViewDelegate, UICollectionViewD
             return backdropImageArray.count
             
         case detailMovieView.castCollectionView:
-            return 10
+            return castArray.count
             
         case detailMovieView.posterCollectionView:
             return posterImageArray.count
@@ -137,6 +155,7 @@ extension DetailMovieViewController: UICollectionViewDelegate, UICollectionViewD
                 for: indexPath
             ) as? CastCollectionViewCell else { return UICollectionViewCell() }
             
+            cell.configureCell(castArray[indexPath.item])
             return cell
             
         case detailMovieView.posterCollectionView:
