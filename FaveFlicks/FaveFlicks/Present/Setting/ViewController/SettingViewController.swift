@@ -10,12 +10,7 @@ import UIKit
 final class SettingViewController: UIViewController {
     
     private let settingView = SettingView()
-    private let settingTitleArray: [String] = [
-        StringLiterals.Setting.frequentlyAskedQuestions,
-        StringLiterals.Setting.oneOnoneInquiry,
-        StringLiterals.Setting.setNotifications,
-        StringLiterals.Setting.deleteAccount
-    ]
+    private let settingTitleArray: [SettingItem] = SettingItem.allCases
     
     override func loadView() {
         view = settingView
@@ -55,7 +50,31 @@ extension SettingViewController: UICollectionViewDelegate, UICollectionViewDataS
             for: indexPath
         ) as? SettingCollectionViewCell else { return UICollectionViewCell() }
         
-        cell.configureCell(settingTitleArray[indexPath.item])
+        cell.configureCell(settingTitleArray[indexPath.item].description)
         return cell
+    }
+}
+
+// MARK: - SettingItem
+extension SettingViewController {
+    
+    enum SettingItem: CaseIterable {
+        case frequentlyAskedQuestions
+        case oneOnoneInquiry
+        case setNotifications
+        case deleteAccount
+        
+        var description: String {
+            switch self {
+            case .frequentlyAskedQuestions:
+                return StringLiterals.Setting.frequentlyAskedQuestions
+            case .oneOnoneInquiry:
+                return StringLiterals.Setting.oneOnoneInquiry
+            case .setNotifications:
+                return StringLiterals.Setting.setNotifications
+            case .deleteAccount:
+                return StringLiterals.Setting.deleteAccount
+            }
+        }
     }
 }
