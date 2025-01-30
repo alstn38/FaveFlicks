@@ -18,6 +18,7 @@ final class UserDefaultManager {
     private static let nickNameKey: String = "nickNameKey"
     private static let joinDateKey: String = "joinDateKey"
     private static let movieBoxCountKey: String = "movieBoxCountKey"
+    private static let recentSearchedTextArrayKey: String = "recentSearchedTextArrayKey"
     
     @UserDefault(key: hasProfileKey, defaultValue: false)
     var hasProfile
@@ -33,6 +34,9 @@ final class UserDefaultManager {
     
     @UserDefault(key: movieBoxCountKey, defaultValue: 0)
     var movieBoxCount
+    
+    @UserDefault(key: recentSearchedTextArrayKey, defaultValue: Array<String>())
+    var recentSearchedTextArrayKey
     
     func deleteAccount() {
         hasProfile = false
