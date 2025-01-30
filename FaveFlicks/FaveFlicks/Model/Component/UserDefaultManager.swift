@@ -33,4 +33,12 @@ final class UserDefaultManager {
     
     @UserDefault(key: movieBoxCountKey, defaultValue: 0)
     var movieBoxCount
+    
+    func deleteAccount() {
+        hasProfile = false
+        profileImageIndex = 0
+        nickName = ""
+        joinDate = ""
+        movieBoxCount = 0
+    }
 }
