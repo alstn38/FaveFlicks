@@ -20,11 +20,17 @@ final class SettingViewController: UIViewController {
         super.viewDidLoad()
         
         configureNavigation()
+        configureTapGestureRecognizer()
         configureCollectionView()
     }
     
     private func configureNavigation() {
         navigationItem.title = StringLiterals.Setting.title
+    }
+    
+    private func configureTapGestureRecognizer() {
+        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(userInfoViewDidTap))
+        settingView.userInfoView.addGestureRecognizer(tapGestureRecognizer)
     }
     
     private func configureCollectionView() {
@@ -34,6 +40,20 @@ final class SettingViewController: UIViewController {
             SettingCollectionViewCell.self,
             forCellWithReuseIdentifier: SettingCollectionViewCell.identifier
         )
+    }
+    
+    @objc private func userInfoViewDidTap(_ sender: UITapGestureRecognizer) {
+        let profileNickNameViewController = ProfileNickNameViewController(presentationStyleType: .modal)
+        let profileNickNameNavigationController = UINavigationController(rootViewController: profileNickNameViewController)
+        profileNickNameNavigationController.modalPresentationStyle = .pageSheet
+        
+        if let sheet = profileNickNameNavigationController.sheetPresentationController {
+            sheet.detents = [.large()]
+            sheet.prefersGrabberVisible = true
+            sheet.preferredCornerRadius = 30
+        }
+        
+        present(profileNickNameNavigationController, animated: true)
     }
 }
 

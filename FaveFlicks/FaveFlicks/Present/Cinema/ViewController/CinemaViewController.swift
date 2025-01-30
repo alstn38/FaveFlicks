@@ -25,6 +25,7 @@ final class CinemaViewController: UIViewController {
         super.viewDidLoad()
         
         configureNavigation()
+        configureTapGestureRecognizer()
         configureCollectionView()
         fetchTrendMovie()
     }
@@ -40,6 +41,11 @@ final class CinemaViewController: UIViewController {
         navigationItem.title = StringLiterals.Cinema.title
         navigationItem.backButtonTitle = StringLiterals.NavigationItem.backButtonTitle
         navigationItem.rightBarButtonItem = searchButton
+    }
+    
+    private func configureTapGestureRecognizer() {
+        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(userInfoViewDidTap))
+        cinemaView.userInfoView.addGestureRecognizer(tapGestureRecognizer)
     }
     
     private func configureCollectionView() {
@@ -74,6 +80,20 @@ final class CinemaViewController: UIViewController {
     @objc private func searchButtonDidTap(_ sender: UIBarButtonItem) {
         let searchViewController = SearchViewController()
         navigationController?.pushViewController(searchViewController, animated: true)
+    }
+    
+    @objc private func userInfoViewDidTap(_ sender: UITapGestureRecognizer) {
+        let profileNickNameViewController = ProfileNickNameViewController(presentationStyleType: .modal)
+        let profileNickNameNavigationController = UINavigationController(rootViewController: profileNickNameViewController)
+        profileNickNameNavigationController.modalPresentationStyle = .pageSheet
+        
+        if let sheet = profileNickNameNavigationController.sheetPresentationController {
+            sheet.detents = [.large()]
+            sheet.prefersGrabberVisible = true
+            sheet.preferredCornerRadius = 30
+        }
+        
+        present(profileNickNameNavigationController, animated: true)
     }
 }
 
