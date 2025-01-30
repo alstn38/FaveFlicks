@@ -10,4 +10,5 @@ import Foundation
 extension Notification.Name {
     
     static let updateUserInfo = Notification.Name("updateUserInfo")
+    static let updateRecentSearchTextArray = Notification.Name("updateRecentSearchTextArray")
 }
