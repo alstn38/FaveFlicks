@@ -34,6 +34,7 @@ final class DetailMovieView: UIView {
         collectionView.showsHorizontalScrollIndicator = false
         collectionView.showsVerticalScrollIndicator = false
         collectionView.backgroundColor = UIColor(resource: .faveFlicksBlack)
+        collectionView.isPagingEnabled = true
         return collectionView
     }()
     
@@ -62,7 +63,7 @@ final class DetailMovieView: UIView {
     
     private let calendarDateLabel: UILabel = {
         let label = UILabel()
-        label.text = "2024-01-21"
+        label.text = "2024-01-21" // TODO: 이후 교체
         label.font = .systemFont(ofSize: 12, weight: .regular)
         label.textColor = UIColor(resource: .faveFlicksGray)
         return label
@@ -84,7 +85,7 @@ final class DetailMovieView: UIView {
     
     private let starRateLabel: UILabel = {
         let label = UILabel()
-        label.text = "8.0"
+        label.text = "8.0" // TODO: 이후 교체
         label.font = .systemFont(ofSize: 12, weight: .regular)
         label.textColor = UIColor(resource: .faveFlicksGray)
         return label
@@ -106,7 +107,7 @@ final class DetailMovieView: UIView {
     
     private let genreLabel: UILabel = {
         let label = UILabel()
-        label.text = "액션, 스릴러릴, 오우야"
+        label.text = "액션, 스릴러릴, 오우야" // TODO: 이후 교체
         label.font = .systemFont(ofSize: 12, weight: .regular)
         label.textColor = UIColor(resource: .faveFlicksGray)
         return label
@@ -152,8 +153,8 @@ final class DetailMovieView: UIView {
         let edgeInset: CGFloat = 10
         layout.scrollDirection = .horizontal
         layout.minimumInteritemSpacing = edgeInset
-        layout.sectionInset = UIEdgeInsets(top: edgeInset, left: edgeInset, bottom: edgeInset, right: edgeInset)
-        layout.itemSize = CGSize(width: width * 2 / 5, height: 80)
+        layout.sectionInset = UIEdgeInsets(top: 0, left: edgeInset, bottom: 0, right: edgeInset)
+        layout.itemSize = CGSize(width: width * 2 / 5, height: 60)
         
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.showsHorizontalScrollIndicator = false
@@ -303,7 +304,7 @@ final class DetailMovieView: UIView {
         castCollectionView.snp.makeConstraints {
             $0.top.equalTo(castTitleLabel.snp.bottom).offset(12)
             $0.horizontalEdges.equalToSuperview()
-            $0.height.equalTo(180)
+            $0.height.equalTo(130)
         }
         
         posterTitleLabel.snp.makeConstraints {
