@@ -26,7 +26,7 @@ final class RecentSearchedCollectionViewCell: UICollectionViewCell {
         return label
     }()
     
-    private let deleteButton: UIButton = {
+    let deleteButton: UIButton = {
         var imageConfiguration = UIImage.SymbolConfiguration(pointSize: 8)
         var configuration = UIButton.Configuration.plain()
         configuration.preferredSymbolConfigurationForImage = imageConfiguration
@@ -75,7 +75,7 @@ final class RecentSearchedCollectionViewCell: UICollectionViewCell {
         
         deleteButton.snp.makeConstraints {
             $0.centerY.equalTo(roundBackgroundView)
-            $0.size.equalTo(12)
+            $0.size.equalTo(14)
             $0.trailing.equalTo(roundBackgroundView).inset(8)
         }
     }

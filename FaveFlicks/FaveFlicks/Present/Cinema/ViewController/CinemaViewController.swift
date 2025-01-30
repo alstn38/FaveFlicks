@@ -143,6 +143,11 @@ final class CinemaViewController: UIViewController {
         UserDefaultManager.shared.recentSearchedTextArrayKey.removeAll()
         recentSearchTextArray = UserDefaultManager.shared.recentSearchedTextArrayKey
     }
+    
+    @objc private func recentSearchedCellDeleteButtonDidTap(_ sender: UIButton) {
+        UserDefaultManager.shared.recentSearchedTextArrayKey.remove(at: sender.tag)
+        recentSearchTextArray = UserDefaultManager.shared.recentSearchedTextArrayKey
+    }
 }
 
 // MARK: - UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout
@@ -170,6 +175,8 @@ extension CinemaViewController: UICollectionViewDelegate, UICollectionViewDataSo
             ) as? RecentSearchedCollectionViewCell else { return UICollectionViewCell() }
             
             cell.configureCell(recentSearchTextArray[indexPath.item])
+            cell.deleteButton.tag = indexPath.item
+            cell.deleteButton.addTarget(self, action: #selector(recentSearchedCellDeleteButtonDidTap), for: .touchUpInside)
             return cell
             
         case cinemaView.todayMovieCollectionView:
