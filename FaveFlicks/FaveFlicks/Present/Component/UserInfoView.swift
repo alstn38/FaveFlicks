@@ -64,7 +64,7 @@ final class UserInfoView: UIView {
         label.textAlignment = .center
         return label
     }()
-
+    
     init() {
         super.init(frame: .zero)
         configureView()
@@ -102,6 +102,13 @@ final class UserInfoView: UIView {
                 self.alpha = 1.0
             }
         }
+    }
+    
+    func updateUserInfo() {
+        profileImageView.image = ProfileImageManager().getCurrentProfileImage()
+        nickNameLabel.text = UserDefaultManager.shared.nickName
+        joinDateLabel.text = UserDefaultManager.shared.joinDate
+        movieBoxCountLabel.text = "\(UserDefaultManager.shared.movieBoxCount)" + StringLiterals.Cinema.movieBoxCount
     }
          
     private func configureView() {
