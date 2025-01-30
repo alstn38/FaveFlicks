@@ -110,6 +110,8 @@ final class ProfileNickNameViewController: UIViewController {
         if presentationStyleType == .push {
             UserDefaultManager.shared.joinDate = dateFormatter.string(from: Date())
         }
+        
+        NotificationCenter.default.post(name: Notification.Name.updateUserInfo, object: nil)
     }
     
     @objc private func profileImageViewDidTap(_ sender: UIView) {

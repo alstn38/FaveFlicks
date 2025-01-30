@@ -25,6 +25,8 @@ final class CinemaViewController: UIViewController {
         super.viewDidLoad()
         
         configureNavigation()
+        addObserver()
+        configureUserInfoView()
         configureTapGestureRecognizer()
         configureCollectionView()
         fetchTrendMovie()
@@ -41,6 +43,20 @@ final class CinemaViewController: UIViewController {
         navigationItem.title = StringLiterals.Cinema.title
         navigationItem.backButtonTitle = StringLiterals.NavigationItem.backButtonTitle
         navigationItem.rightBarButtonItem = searchButton
+    }
+    
+    private func addObserver() {
+        NotificationCenter.default.addObserver(
+            forName: Notification.Name.updateUserInfo,
+            object: nil,
+            queue: nil
+        ) { [weak self] _ in
+            self?.cinemaView.userInfoView.updateUserInfo()
+        }
+    }
+    
+    private func configureUserInfoView() {
+        cinemaView.userInfoView.updateUserInfo()
     }
     
     private func configureTapGestureRecognizer() {

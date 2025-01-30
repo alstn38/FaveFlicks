@@ -20,12 +20,28 @@ final class SettingViewController: UIViewController {
         super.viewDidLoad()
         
         configureNavigation()
+        addObserver()
+        configureUserInfoView()
         configureTapGestureRecognizer()
         configureCollectionView()
     }
     
     private func configureNavigation() {
         navigationItem.title = StringLiterals.Setting.title
+    }
+    
+    private func addObserver() {
+        NotificationCenter.default.addObserver(
+            forName: Notification.Name.updateUserInfo,
+            object: nil,
+            queue: nil
+        ) { [weak self] _ in
+            self?.settingView.userInfoView.updateUserInfo()
+        }
+    }
+    
+    private func configureUserInfoView() {
+        settingView.userInfoView.updateUserInfo()
     }
     
     private func configureTapGestureRecognizer() {
