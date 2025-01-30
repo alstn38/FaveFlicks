@@ -48,6 +48,7 @@ final class DetailMovieViewController: UIViewController {
         
         configureNavigation()
         configureCollectionView()
+        detailMovieView.configureView(detailMovie)
         fetchMovieImage(movieID: detailMovie.id)
         fetchCredit(movieID: detailMovie.id)
     }

@@ -63,7 +63,6 @@ final class DetailMovieView: UIView {
     
     private let calendarDateLabel: UILabel = {
         let label = UILabel()
-        label.text = "2024-01-21" // TODO: 이후 교체
         label.font = .systemFont(ofSize: 12, weight: .regular)
         label.textColor = UIColor(resource: .faveFlicksGray)
         return label
@@ -85,7 +84,6 @@ final class DetailMovieView: UIView {
     
     private let starRateLabel: UILabel = {
         let label = UILabel()
-        label.text = "8.0" // TODO: 이후 교체
         label.font = .systemFont(ofSize: 12, weight: .regular)
         label.textColor = UIColor(resource: .faveFlicksGray)
         return label
@@ -107,7 +105,6 @@ final class DetailMovieView: UIView {
     
     private let genreLabel: UILabel = {
         let label = UILabel()
-        label.text = "액션, 스릴러릴, 오우야" // TODO: 이후 교체
         label.font = .systemFont(ofSize: 12, weight: .regular)
         label.textColor = UIColor(resource: .faveFlicksGray)
         return label
@@ -132,7 +129,6 @@ final class DetailMovieView: UIView {
     
     private let synopsisDescriptionLabel: UILabel = {
         let label = UILabel()
-        label.text = "임시로일단길게임시로일단길게임시로일단길게임시로일단길게임시로일단길게임시로일단길게임시로일단길게말하기임시로일단길게말하기임시로일단길게말하기임시로일단길게말하기임시로일단길게말하기임시로일단길게말하기"
         label.font = .systemFont(ofSize: 12, weight: .regular)
         label.textColor = UIColor(resource: .faveFlicksWhite)
         label.numberOfLines = 3
@@ -197,6 +193,15 @@ final class DetailMovieView: UIView {
     @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    func configureView(_ detailMovie: DetailMovie) {
+        calendarDateLabel.text = detailMovie.releaseDate
+        starRateLabel.text = String(format: "%.1f", detailMovie.voteAverage)
+        
+        let genreArray = detailMovie.genreIDArray.map { GenreType(num: $0).description }
+        genreLabel.text = genreArray.joined(separator: StringLiterals.DetailMovie.comma)
+        synopsisDescriptionLabel.text = detailMovie.overview
     }
     
     private func configureView() {
