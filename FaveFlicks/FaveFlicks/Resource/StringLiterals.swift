@@ -68,5 +68,6 @@ enum StringLiterals {
         static let castTitle: String = "Cast"
         static let posterTitle: String = "Poster"
         static let comma: String = ","
+        static let emptySynopsis: String = "영화 줄거리 정보가 없습니다."
     }
 }
