@@ -27,6 +27,7 @@ final class DetailMovieView: UIView {
         let width: CGFloat = UIScreen.main.bounds.width
         layout.scrollDirection = .horizontal
         layout.minimumInteritemSpacing = .zero
+        layout.minimumLineSpacing = .zero
         layout.sectionInset = .zero
         layout.itemSize = CGSize(width: width, height: width * 9 / 16)
         
@@ -41,6 +42,8 @@ final class DetailMovieView: UIView {
     let backdropPageControl: UIPageControl = {
         let pageControl = UIPageControl()
         pageControl.isUserInteractionEnabled = false
+        pageControl.backgroundColor = UIColor(resource: .faveFlicksBlack).withAlphaComponent(0.3)
+        pageControl.layer.cornerRadius = 10
         return pageControl
     }()
     
@@ -202,6 +205,11 @@ final class DetailMovieView: UIView {
         let genreArray = detailMovie.genreIDArray.map { GenreType(num: $0).description }
         genreLabel.text = genreArray.joined(separator: StringLiterals.DetailMovie.comma)
         synopsisDescriptionLabel.text = detailMovie.overview
+    }
+    
+    func configurePageControl(numberOfPages: Int) {
+        backdropPageControl.numberOfPages = numberOfPages
+        backdropPageControl.currentPage = 0
     }
     
     private func configureView() {

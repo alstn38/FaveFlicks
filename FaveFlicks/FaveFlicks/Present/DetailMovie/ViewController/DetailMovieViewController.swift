@@ -94,8 +94,9 @@ final class DetailMovieViewController: UIViewController {
             guard let self else { return }
             switch response {
             case .success(let value):
-                self.backdropImageArray = Array(value.backdrops.prefix(3))
+                self.backdropImageArray = Array(value.backdrops.prefix(5))
                 self.posterImageArray = value.posters
+                self.detailMovieView.configurePageControl(numberOfPages: self.backdropImageArray.count)
             case .failure(let error):
                 self.presentAlert(title: StringLiterals.Alert.networkError, message: error.description)
             }
@@ -170,6 +171,17 @@ extension DetailMovieViewController: UICollectionViewDelegate, UICollectionViewD
             
         default:
             return UICollectionViewCell()
+        }
+    }
+}
+
+// MARK: - UIScrollViewDelegate
+extension DetailMovieViewController: UIScrollViewDelegate {
+    
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        if fmod(scrollView.contentOffset.x, scrollView.frame.maxX) == 0 {
+            let currentPage: Int = Int(scrollView.contentOffset.x / scrollView.frame.maxX)
+            detailMovieView.backdropPageControl.currentPage = currentPage
         }
     }
 }
