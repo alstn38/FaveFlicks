@@ -70,4 +70,12 @@ enum StringLiterals {
         static let comma: String = ","
         static let emptySynopsis: String = "영화 줄거리 정보가 없습니다."
     }
+    
+    enum Setting {
+        static let title: String = "설정"
+        static let frequentlyAskedQuestions: String = "자주 묻는 질문"
+        static let oneOnoneInquiry: String = "1:1 문의"
+        static let setNotifications: String = "알림 설정"
+        static let deleteAccount: String = "탈퇴하기"
+    }
 }
