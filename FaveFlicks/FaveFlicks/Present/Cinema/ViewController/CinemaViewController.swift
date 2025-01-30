@@ -10,7 +10,14 @@ import UIKit
 final class CinemaViewController: UIViewController {
     
     private let cinemaView = CinemaView()
-    private let sampleRecentSearched: [String] = ["현빈", "스파이더", "해리포터", "소방관", "크리스마스"]
+    
+    private var recentSearchTextArray: [String] = UserDefaultManager.shared.recentSearchedTextArrayKey {
+        didSet {
+            configureRecentSearch()
+            cinemaView.recentSearchedCollectionView.reloadData()
+        }
+    }
+    
     private var trendMovieArray: [DetailMovie] = [] {
         didSet {
             cinemaView.todayMovieCollectionView.reloadData()
@@ -27,6 +34,7 @@ final class CinemaViewController: UIViewController {
         configureNavigation()
         addObserver()
         configureUserInfoView()
+        configureRecentSearch()
         configureTapGestureRecognizer()
         configureCollectionView()
         fetchTrendMovie()
@@ -53,10 +61,24 @@ final class CinemaViewController: UIViewController {
         ) { [weak self] _ in
             self?.cinemaView.userInfoView.updateUserInfo()
         }
+        
+        NotificationCenter.default.addObserver(
+            forName: Notification.Name.updateRecentSearchTextArray,
+            object: nil,
+            queue: nil
+        ) { [weak self] _ in
+            self?.recentSearchTextArray = UserDefaultManager.shared.recentSearchedTextArrayKey
+        }
     }
     
     private func configureUserInfoView() {
         cinemaView.userInfoView.updateUserInfo()
+    }
+    
+    private func configureRecentSearch() {
+        let isEmptyRecentSearchTextArray = recentSearchTextArray.isEmpty
+        cinemaView.noRecentSearchedGuideLabel.isHidden = !isEmptyRecentSearchTextArray
+        cinemaView.recentSearchedDeleteButton.isHidden = isEmptyRecentSearchTextArray
     }
     
     private func configureTapGestureRecognizer() {
@@ -119,7 +141,7 @@ extension CinemaViewController: UICollectionViewDelegate, UICollectionViewDataSo
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         switch collectionView {
         case cinemaView.recentSearchedCollectionView:
-            return sampleRecentSearched.count
+            return recentSearchTextArray.count
             
         case cinemaView.todayMovieCollectionView:
             return trendMovieArray.count
@@ -137,7 +159,7 @@ extension CinemaViewController: UICollectionViewDelegate, UICollectionViewDataSo
                 for: indexPath
             ) as? RecentSearchedCollectionViewCell else { return UICollectionViewCell() }
             
-            cell.configureCell(sampleRecentSearched[indexPath.item])
+            cell.configureCell(recentSearchTextArray[indexPath.item])
             return cell
             
         case cinemaView.todayMovieCollectionView:
