@@ -22,6 +22,7 @@ enum StringLiterals {
     enum Alert {
         static let invalidNickName: String = "닉네임이 조건에 맞지 않습니다"
         static let confirm: String = "확인"
+        static let cancel: String = "취소"
         static let networkError: String = "네트워크 오류"
     }
     
@@ -77,5 +78,7 @@ enum StringLiterals {
         static let oneOnoneInquiry: String = "1:1 문의"
         static let setNotifications: String = "알림 설정"
         static let deleteAccount: String = "탈퇴하기"
+        static let deleteAlertTitle: String = "탈퇴하기"
+        static let deleteAlertMessage: String = "탈퇴를 하면 데이터가 모두 초기화됩니다. 탈퇴 하시겠습니까?"
     }
 }
