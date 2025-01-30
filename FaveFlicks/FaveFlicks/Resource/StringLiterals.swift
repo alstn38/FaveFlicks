@@ -34,6 +34,7 @@ enum StringLiterals {
     
     enum ProfileNickName {
         static let title: String = "프로필 설정"
+        static let saveButtonTitle: String = "저장"
         static let nickNamePlaceholder: String = "닉네임을 입력해주세요."
         static let confirmButtonTitle: String = "완료"
         static let possibleStatus: String = "사용할 수 있는 닉네임이에요"
