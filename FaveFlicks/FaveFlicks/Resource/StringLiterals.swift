@@ -67,5 +67,6 @@ enum StringLiterals {
         static let hideButtonTitle: String = "Hide"
         static let castTitle: String = "Cast"
         static let posterTitle: String = "Poster"
+        static let comma: String = ","
     }
 }
