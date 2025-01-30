@@ -36,6 +36,7 @@ final class CinemaViewController: UIViewController {
         configureUserInfoView()
         configureRecentSearch()
         configureTapGestureRecognizer()
+        configureAddTarget()
         configureCollectionView()
         fetchTrendMovie()
     }
@@ -86,6 +87,10 @@ final class CinemaViewController: UIViewController {
         cinemaView.userInfoView.addGestureRecognizer(tapGestureRecognizer)
     }
     
+    private func configureAddTarget() {
+        cinemaView.recentSearchedDeleteButton.addTarget(self, action: #selector(recentSearchedDeleteButtonDidTap), for: .touchUpInside)
+    }
+    
     private func configureCollectionView() {
         cinemaView.recentSearchedCollectionView.delegate = self
         cinemaView.recentSearchedCollectionView.dataSource = self
@@ -132,6 +137,11 @@ final class CinemaViewController: UIViewController {
         }
         
         present(profileNickNameNavigationController, animated: true)
+    }
+    
+    @objc private func recentSearchedDeleteButtonDidTap(_ sender: UIButton) {
+        UserDefaultManager.shared.recentSearchedTextArrayKey.removeAll()
+        recentSearchTextArray = UserDefaultManager.shared.recentSearchedTextArrayKey
     }
 }
 

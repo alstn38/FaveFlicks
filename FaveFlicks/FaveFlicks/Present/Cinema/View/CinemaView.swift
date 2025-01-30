@@ -21,7 +21,7 @@ final class CinemaView: UIView {
         return label
     }()
     
-    private let recentSearchedDeleteButton: UIButton = {
+    let recentSearchedDeleteButton: UIButton = {
         let button = UIButton()
         button.setTitle(StringLiterals.Cinema.recentSearchedDelete, for: .normal)
         button.setTitleColor(UIColor(resource: .faveFlicsMain), for: .normal)
