@@ -67,7 +67,9 @@ final class TodayMovieCollectionViewCell: UICollectionViewCell {
     
     func configureCell(_ trendMovie: DetailMovie) {
         movieTitleLabel.text = trendMovie.title
-        movieDescriptionLabel.text = trendMovie.overview
+        
+        let overview = !trendMovie.overview.isEmpty ? trendMovie.overview : StringLiterals.Cinema.emptyOverview
+        movieDescriptionLabel.text = overview
         
         if let posterPath = trendMovie.posterPath {
             let url = URL(string: Secret.imageURL + posterPath)
@@ -93,13 +95,14 @@ final class TodayMovieCollectionViewCell: UICollectionViewCell {
         posterImageView.snp.makeConstraints {
             $0.top.horizontalEdges.equalToSuperview()
             $0.height.greaterThanOrEqualTo(100)
+            $0.bottom.equalTo(movieTitleLabel.snp.top).offset(-10)
         }
         
         movieTitleLabel.snp.makeConstraints {
-            $0.top.equalTo(posterImageView.snp.bottom).offset(10)
             $0.leading.equalToSuperview()
             $0.height.equalTo(17)
             $0.trailing.equalTo(favoriteButton.snp.leading).offset(-10)
+            $0.bottom.equalTo(movieDescriptionLabel.snp.top).offset(-10)
         }
         
         favoriteButton.snp.makeConstraints {
@@ -109,9 +112,8 @@ final class TodayMovieCollectionViewCell: UICollectionViewCell {
         }
         
         movieDescriptionLabel.snp.makeConstraints {
-            $0.top.equalTo(movieTitleLabel.snp.bottom).offset(10)
             $0.horizontalEdges.equalToSuperview()
-            $0.height.lessThanOrEqualTo(28)
+            $0.height.equalTo(30)
             $0.bottom.equalToSuperview().inset(5)
         }
     }
