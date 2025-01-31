@@ -32,6 +32,7 @@ final class SearchViewController: UIViewController {
         super.viewDidLoad()
         
         configureNavigation()
+        configureAddObserver()
         configureSearchBar()
         configureCollectionView()
     }
@@ -54,6 +55,16 @@ final class SearchViewController: UIViewController {
     private func configureResponder() {
         guard !isRecentSearchResult else { return }
         searchView.searchBar.becomeFirstResponder()
+    }
+    
+    private func configureAddObserver() {
+        NotificationCenter.default.addObserver(
+            forName: Notification.Name.updateFavoriteMovieDictionary,
+            object: nil,
+            queue: nil
+        ) { [weak self] _ in
+            self?.searchView.searchCollectionView.reloadData()
+        }
     }
     
     private func configureSearchBar() {
@@ -102,8 +113,6 @@ final class SearchViewController: UIViewController {
         case false:
             UserDefaultManager.shared.favoriteMovieDictionary[movieID] = true
         }
-        
-        searchView.searchCollectionView.reloadItems(at: [IndexPath(row: sender.tag, section: 0)])
     }
 }
 

@@ -32,7 +32,7 @@ final class CinemaViewController: UIViewController {
         super.viewDidLoad()
         
         configureNavigation()
-        addObserver()
+        configureAddObserver()
         configureUserInfoView()
         configureRecentSearch()
         configureTapGestureRecognizer()
@@ -54,7 +54,7 @@ final class CinemaViewController: UIViewController {
         navigationItem.rightBarButtonItem = searchButton
     }
     
-    private func addObserver() {
+    private func configureAddObserver() {
         NotificationCenter.default.addObserver(
             forName: Notification.Name.updateUserInfo,
             object: nil,
@@ -69,6 +69,15 @@ final class CinemaViewController: UIViewController {
             queue: nil
         ) { [weak self] _ in
             self?.recentSearchTextArray = UserDefaultManager.shared.recentSearchedTextArray
+        }
+        
+        NotificationCenter.default.addObserver(
+            forName: Notification.Name.updateFavoriteMovieDictionary,
+            object: nil,
+            queue: nil
+        ) { [weak self] _ in
+            self?.cinemaView.todayMovieCollectionView.reloadData()
+            self?.cinemaView.userInfoView.updateUserInfo()
         }
     }
     
@@ -151,17 +160,15 @@ final class CinemaViewController: UIViewController {
     
     @objc private func todayMovieCellFavoriteButtonDidTap(_ sender: UIButton) {
         let movieID = String(trendMovieArray[sender.tag].id)
-        let isContainMovieID = UserDefaultManager.shared.favoriteMovieDictionary.keys.contains(movieID)
+        let isFavoriteMovie = UserDefaultManager.shared.favoriteMovieDictionary.keys.contains(movieID)
         
-        switch isContainMovieID {
+        switch isFavoriteMovie {
         case true:
             UserDefaultManager.shared.favoriteMovieDictionary.removeValue(forKey: movieID)
             
         case false:
             UserDefaultManager.shared.favoriteMovieDictionary[movieID] = true
         }
-        
-        cinemaView.todayMovieCollectionView.reloadItems(at: [IndexPath(row: sender.tag, section: 0)])
     }
 }
 
