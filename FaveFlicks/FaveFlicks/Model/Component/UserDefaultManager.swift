@@ -34,7 +34,11 @@ final class UserDefaultManager {
     var joinDate
     
     @UserDefault(key: recentSearchedTextArrayKey, defaultValue: Array<String>())
-    var recentSearchedTextArray
+    var recentSearchedTextArray {
+        didSet {
+            NotificationCenter.default.post(name: Notification.Name.updateRecentSearchTextArray, object: nil)
+        }
+    }
     
     @UserDefault(key: favoriteMovieDictionaryKey, defaultValue: Dictionary<String, Bool>())
     var favoriteMovieDictionary {
