@@ -11,6 +11,13 @@ import UIKit
 
 final class PosterCollectionViewCell: UICollectionViewCell {
     
+    private let activityIndicatorView: UIActivityIndicatorView = {
+        let activityIndicatorView = UIActivityIndicatorView(style: .medium)
+        activityIndicatorView.hidesWhenStopped = true
+        activityIndicatorView.color = UIColor(resource: .faveFlicksWhite)
+        return activityIndicatorView
+    }()
+    
     private let posterImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
@@ -31,14 +38,24 @@ final class PosterCollectionViewCell: UICollectionViewCell {
     
     func configureCell(_ detailImage: DetailImage) {
         let url = URL(string: Secret.imageURL + detailImage.filePath)
-        posterImageView.kf.setImage(with: url)
+        activityIndicatorView.startAnimating()
+        posterImageView.kf.setImage(with: url) { [weak self] _ in
+            self?.activityIndicatorView.stopAnimating()
+        }
     }
     
     private func configureHierarchy() {
-        addSubview(posterImageView)
+        addSubviews(
+            posterImageView,
+            activityIndicatorView
+        )
     }
     
     private func configureLayout() {
+        activityIndicatorView.snp.makeConstraints {
+            $0.center.equalTo(posterImageView)
+        }
+        
         posterImageView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
