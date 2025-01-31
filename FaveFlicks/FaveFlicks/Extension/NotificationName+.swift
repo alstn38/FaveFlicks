@@ -11,4 +11,5 @@ extension Notification.Name {
     
     static let updateUserInfo = Notification.Name("updateUserInfo")
     static let updateRecentSearchTextArray = Notification.Name("updateRecentSearchTextArray")
+    static let updateFavoriteMovieDictionary = Notification.Name("updateFavoriteMovieDictionary")
 }
