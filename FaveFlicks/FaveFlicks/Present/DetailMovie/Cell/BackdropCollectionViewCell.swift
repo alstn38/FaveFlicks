@@ -11,6 +11,13 @@ import UIKit
 
 final class BackdropCollectionViewCell: UICollectionViewCell {
     
+    private let activityIndicatorView: UIActivityIndicatorView = {
+        let activityIndicatorView = UIActivityIndicatorView(style: .medium)
+        activityIndicatorView.hidesWhenStopped = true
+        activityIndicatorView.color = UIColor(resource: .faveFlicksWhite)
+        return activityIndicatorView
+    }()
+    
     private let backdropImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
@@ -31,14 +38,24 @@ final class BackdropCollectionViewCell: UICollectionViewCell {
     
     func configureCell(_ detailImage: DetailImage) {
         let url = URL(string: Secret.imageURL + detailImage.filePath)
-        backdropImageView.kf.setImage(with: url)
+        activityIndicatorView.startAnimating()
+        backdropImageView.kf.setImage(with: url) { [weak self] _ in
+            self?.activityIndicatorView.stopAnimating()
+        }
     }
     
     private func configureHierarchy() {
-        addSubview(backdropImageView)
+        addSubviews(
+            backdropImageView,
+            activityIndicatorView
+        )
     }
     
     private func configureLayout() {
+        activityIndicatorView.snp.makeConstraints {
+            $0.center.equalTo(backdropImageView)
+        }
+        
         backdropImageView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
