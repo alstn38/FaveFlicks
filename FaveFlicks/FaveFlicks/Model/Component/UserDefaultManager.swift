@@ -33,20 +33,22 @@ final class UserDefaultManager {
     @UserDefault(key: joinDateKey, defaultValue: "")
     var joinDate
     
-    @UserDefault(key: movieBoxCountKey, defaultValue: 0)
-    var movieBoxCount
-    
     @UserDefault(key: recentSearchedTextArrayKey, defaultValue: Array<String>())
     var recentSearchedTextArray
     
     @UserDefault(key: favoriteMovieDictionaryKey, defaultValue: Dictionary<String, Bool>())
-    var favoriteMovieDictionary
+    var favoriteMovieDictionary {
+        didSet {
+            NotificationCenter.default.post(name: Notification.Name.updateFavoriteMovieDictionary, object: nil)
+        }
+    }
     
     func deleteAccount() {
         hasProfile = false
         profileImageIndex = 0
         nickName = ""
         joinDate = ""
-        movieBoxCount = 0
+        recentSearchedTextArray = []
+        favoriteMovieDictionary = [:]
     }
 }
