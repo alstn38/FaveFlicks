@@ -33,4 +33,17 @@ struct DetailMovie: Codable {
         case releaseDate = "release_date"
         case voteAverage = "vote_average"
     }
+    
+    func changeReleaseDate(_ dateString: String) -> DetailMovie {
+        return DetailMovie(
+            backdropPath: self.backdropPath,
+            id: self.id,
+            title: self.title,
+            overview: self.overview,
+            posterPath: self.posterPath,
+            genreIDArray: self.genreIDArray,
+            releaseDate: dateString,
+            voteAverage: self.voteAverage
+        )
+    }
 }
