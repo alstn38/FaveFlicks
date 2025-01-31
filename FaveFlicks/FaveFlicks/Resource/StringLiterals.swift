@@ -27,7 +27,6 @@ enum StringLiterals {
     }
     
     enum Onboarding {
-        static let title: String = "Onboarding"
         static let subTitle: String = "당신만의 영화 세상,\nFavaFlicks를 시작해보세요."
         static let startButtonTitle: String = "시작하기"
     }
