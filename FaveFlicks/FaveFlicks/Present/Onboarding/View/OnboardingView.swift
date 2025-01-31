@@ -17,14 +17,11 @@ final class OnboardingView: UIView {
         return imageView
     }()
     
-    private let onboardingTitleLabel: UILabel = {
-        let label = UILabel()
-        label.text = StringLiterals.Onboarding.title
-        label.textColor = UIColor(resource: .faveFlicksWhite)
-        label.font = .boldSystemFont(ofSize: 30)
-        label.textAlignment = .center
-        label.numberOfLines = 1
-        return label
+    private let onboardingTitleImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.contentMode = .scaleAspectFit
+        imageView.image = UIImage(resource: .onboardingLabel)
+        return imageView
     }()
     
     private let onboardingSubTitleLabel: UILabel = {
@@ -73,7 +70,7 @@ final class OnboardingView: UIView {
     private func configureHierarchy() {
         addSubviews(
             onboardingImageView,
-            onboardingTitleLabel,
+            onboardingTitleImageView,
             onboardingSubTitleLabel,
             startButton
         )
@@ -86,7 +83,7 @@ final class OnboardingView: UIView {
             $0.height.equalTo(onboardingImageView.snp.width).multipliedBy(4/3)
         }
         
-        onboardingTitleLabel.snp.makeConstraints {
+        onboardingTitleImageView.snp.makeConstraints {
             $0.horizontalEdges.equalTo(safeAreaLayoutGuide)
             $0.bottom.equalTo(onboardingSubTitleLabel.snp.top).offset(-30)
         }
@@ -103,4 +100,3 @@ final class OnboardingView: UIView {
         }
     }
 }
-
