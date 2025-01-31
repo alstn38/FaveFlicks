@@ -33,7 +33,8 @@ enum StringLiterals {
     }
     
     enum ProfileNickName {
-        static let title: String = "프로필 설정"
+        static let settingTitle: String = "프로필 설정"
+        static let editTitle: String = "프로필 편집"
         static let saveButtonTitle: String = "저장"
         static let nickNamePlaceholder: String = "닉네임을 입력해주세요."
         static let confirmButtonTitle: String = "완료"
@@ -45,7 +46,8 @@ enum StringLiterals {
     }
     
     enum ProfileImage {
-        static let title: String = "프로필 이미지 설정"
+        static let settingTitle: String = "프로필 이미지 설정"
+        static let editTitle: String = "프로필 이미지 편집"
     }
     
     enum Cinema {
