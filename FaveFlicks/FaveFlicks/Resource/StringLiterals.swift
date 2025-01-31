@@ -92,4 +92,9 @@ enum StringLiterals {
         static let deleteAlertTitle: String = "탈퇴하기"
         static let deleteAlertMessage: String = "탈퇴를 하면 데이터가 모두 초기화됩니다. 탈퇴 하시겠습니까?"
     }
+    
+    enum UpComing {
+        static let title: String = "UPCOMING"
+        static let upComingGuideText: String = "강민수"
+    }
 }
