@@ -23,6 +23,18 @@ final class SearchViewController: UIViewController {
             searchView.searchCollectionView.reloadData()
         }
     }
+    
+    private let serverDateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = StringLiterals.Search.serverDateFormatter
+        return formatter
+    }()
+    
+    private let presentDateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = StringLiterals.Search.presentDateFormatter
+        return formatter
+    }()
 
     override func loadView() {
         view = searchView
@@ -96,12 +108,29 @@ final class SearchViewController: UIViewController {
     }
     
     private func updateMovieArray(_ searchMovie: SearchMovie) {
+        let formattedMovieArray = searchMovie.results.map {
+            let presentDate = changeReleaseDateFormatter($0.releaseDate)
+            let newResult = $0.changeReleaseDate(presentDate)
+            return newResult
+        }
+        
         if currentPage == 1 {
             totalPage = searchMovie.totalPages
-            searchedMovieArray = searchMovie.results
+            searchedMovieArray = formattedMovieArray
         } else {
-            searchedMovieArray.append(contentsOf: searchMovie.results)
+            searchedMovieArray.append(contentsOf: formattedMovieArray)
         }
+    }
+    
+    private func changeReleaseDateFormatter(_ serverTime: String) -> String {
+        let date = serverDateFormatter.date(from: serverTime)
+        
+        guard let date else {
+            return StringLiterals.Search.noServerDate
+        }
+        
+        let presentTimeString = presentDateFormatter.string(from: date)
+        return presentTimeString
     }
     
     private func insertRecentSearchedTextArray(searchedText: String) {
