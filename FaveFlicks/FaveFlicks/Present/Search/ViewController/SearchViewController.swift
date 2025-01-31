@@ -108,17 +108,11 @@ final class SearchViewController: UIViewController {
     }
     
     private func updateMovieArray(_ searchMovie: SearchMovie) {
-        let formattedMovieArray = searchMovie.results.map {
-            let presentDate = changeReleaseDateFormatter($0.releaseDate)
-            let newResult = $0.changeReleaseDate(presentDate)
-            return newResult
-        }
-        
         if currentPage == 1 {
             totalPage = searchMovie.totalPages
-            searchedMovieArray = formattedMovieArray
+            searchedMovieArray = searchMovie.results
         } else {
-            searchedMovieArray.append(contentsOf: formattedMovieArray)
+            searchedMovieArray.append(contentsOf: searchMovie.results)
         }
     }
     
@@ -180,7 +174,11 @@ extension SearchViewController: UICollectionViewDelegate, UICollectionViewDataSo
             for: indexPath
         ) as? SearchCollectionViewCell else { return UICollectionViewCell() }
         
-        cell.configureCell(searchedMovieArray[indexPath.item])
+        let movieDetail = searchedMovieArray[indexPath.item]
+        let presentDate = changeReleaseDateFormatter(movieDetail.releaseDate)
+        let newResult = movieDetail.changeReleaseDate(presentDate)
+        
+        cell.configureCell(newResult)
         cell.favoriteButton.tag = indexPath.item
         cell.favoriteButton.addTarget(self, action: #selector(searchCellFavoriteButtonDidTap), for: .touchUpInside)
         return cell
