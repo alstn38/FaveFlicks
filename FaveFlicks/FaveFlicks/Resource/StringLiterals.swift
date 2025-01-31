@@ -62,6 +62,9 @@ enum StringLiterals {
         static let title: String = "영화 검색"
         static let searchPlaceholder: String = "영화를 검색해보세요."
         static let noResultText: String = "원하는 검색결과를 찾지 못했습니다."
+        static let serverDateFormatter: String = "yyyy-MM-dd"
+        static let presentDateFormatter: String = "yyyy. MM. dd"
+        static let noServerDate: String = "개봉일 정보가 없습니다."
     }
     
     enum DetailMovie {
