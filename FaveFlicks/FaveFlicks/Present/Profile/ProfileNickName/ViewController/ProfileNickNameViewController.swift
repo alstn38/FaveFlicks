@@ -54,10 +54,14 @@ final class ProfileNickNameViewController: UIViewController {
     }
     
     private func configureNavigation() {
-        navigationItem.title = StringLiterals.ProfileNickName.title
         navigationItem.backButtonTitle = StringLiterals.NavigationItem.backButtonTitle
         
-        if presentationStyleType == .modal {
+        switch presentationStyleType {
+        case PresentationStyleType.push:
+            navigationItem.title = StringLiterals.ProfileNickName.settingTitle
+            
+        case PresentationStyleType.modal:
+            navigationItem.title = StringLiterals.ProfileNickName.editTitle
             let cancelButton = UIBarButtonItem(
                 image: UIImage(systemName: "xmark"),
                 style: .plain,
@@ -115,7 +119,10 @@ final class ProfileNickNameViewController: UIViewController {
     }
     
     @objc private func profileImageViewDidTap(_ sender: UIView) {
-        let profileImageViewController = ProfileImageViewController(selectedProfileImageIndex: selectedProfileImageIndex)
+        let profileImageViewController = ProfileImageViewController(
+            selectedProfileImageIndex: selectedProfileImageIndex,
+            isEditMode: presentationStyleType == .modal
+        )
         profileImageViewController.delegate = self
         navigationController?.pushViewController(profileImageViewController, animated: true)
     }

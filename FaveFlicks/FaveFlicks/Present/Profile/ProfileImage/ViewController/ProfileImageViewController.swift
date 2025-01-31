@@ -15,6 +15,7 @@ final class ProfileImageViewController: UIViewController {
     
     private let profileImageView = ProfileImageView()
     private var selectedProfileImageIndex: Int
+    private var isEditMode: Bool
     private let profileImageManager = ProfileImageManager()
     weak var delegate: ProfileImageViewControllerDelegate?
 
@@ -22,8 +23,9 @@ final class ProfileImageViewController: UIViewController {
         view = profileImageView
     }
     
-    init(selectedProfileImageIndex: Int) {
+    init(selectedProfileImageIndex: Int, isEditMode: Bool) {
         self.selectedProfileImageIndex = selectedProfileImageIndex
+        self.isEditMode = isEditMode
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -41,7 +43,10 @@ final class ProfileImageViewController: UIViewController {
     }
     
     private func configureNavigation() {
-        navigationItem.title = StringLiterals.ProfileImage.title
+        let title = isEditMode
+        ? StringLiterals.ProfileImage.editTitle
+        : StringLiterals.ProfileImage.settingTitle
+        navigationItem.title = title
     }
     
     private func configureProfileImage() {
