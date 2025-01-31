@@ -132,6 +132,7 @@ extension SearchViewController: UISearchBarDelegate {
         view.endEditing(true)
         guard let searchedText = searchBar.text else { return }
         self.searchedText = searchedText
+        self.currentPage = 1
         fetchSearchedMovie(query: searchedText, page: currentPage)
         insertRecentSearchedTextArray(searchedText: searchedText)
     }
