@@ -83,6 +83,7 @@ final class SearchCollectionViewCell: UICollectionViewCell {
     override func prepareForReuse() {
         super.prepareForReuse()
         
+        movieTitleLabel.textColor = UIColor(resource: .faveFlicksWhite)
         genreStackView.arrangedSubviews.forEach {
             $0.removeFromSuperview()
         }
@@ -93,10 +94,11 @@ final class SearchCollectionViewCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configureCell(_ detailMovie: DetailMovie) {
+    func configureCell(_ detailMovie: DetailMovie, searchedText: String) {
         movieTitleLabel.text = detailMovie.title
         movieDateLabel.text = detailMovie.releaseDate
         configureGenreView(detailMovie.genreIDArray)
+        highlightSearchedLabelText(movieTitleLabel, searchedText: searchedText)
         
         let isFavoriteMovie = UserDefaultManager.shared.favoriteMovieDictionary.keys.contains(String(detailMovie.id))
         favoriteButton.isSelected = isFavoriteMovie
@@ -120,6 +122,15 @@ final class SearchCollectionViewCell: UICollectionViewCell {
             let genreView = GenreView(genre: genreIDArray[i])
             genreStackView.addArrangedSubview(genreView)
         }
+    }
+    
+    private func highlightSearchedLabelText(_ label: UILabel, searchedText: String) {
+        guard let labelText = label.text else { return }
+        guard let searchedRange = labelText.range(of: searchedText, options: .caseInsensitive) else { return }
+        let nsRange = NSRange(searchedRange, in: labelText)
+        let attributedString = NSMutableAttributedString(string: labelText)
+        attributedString.addAttribute(.foregroundColor, value: UIColor(resource: .faveFlicsMain), range: nsRange)
+        label.attributedText = attributedString
     }
     
     private func configureHierarchy() {

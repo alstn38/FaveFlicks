@@ -177,8 +177,9 @@ extension SearchViewController: UICollectionViewDelegate, UICollectionViewDataSo
         let movieDetail = searchedMovieArray[indexPath.item]
         let presentDate = changeReleaseDateFormatter(movieDetail.releaseDate)
         let newResult = movieDetail.changeReleaseDate(presentDate)
+        let searchedText = searchedText ?? ""
         
-        cell.configureCell(newResult)
+        cell.configureCell(newResult, searchedText: searchedText)
         cell.favoriteButton.tag = indexPath.item
         cell.favoriteButton.addTarget(self, action: #selector(searchCellFavoriteButtonDidTap), for: .touchUpInside)
         return cell
