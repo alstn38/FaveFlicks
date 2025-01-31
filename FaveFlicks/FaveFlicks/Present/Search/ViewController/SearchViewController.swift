@@ -102,6 +102,13 @@ final class SearchViewController: UIViewController {
         }
     }
     
+    private func insertRecentSearchedTextArray(searchedText: String) {
+        var recentSearchedTextArray = UserDefaultManager.shared.recentSearchedTextArray
+        recentSearchedTextArray.removeAll(where: { $0 == searchedText })
+        recentSearchedTextArray.insert(searchedText, at: 0)
+        UserDefaultManager.shared.recentSearchedTextArray = recentSearchedTextArray
+    }
+    
     @objc private func searchCellFavoriteButtonDidTap(_ sender: UIButton) {
         let movieID = String(searchedMovieArray[sender.tag].id)
         let isFavoriteMovie = UserDefaultManager.shared.favoriteMovieDictionary.keys.contains(movieID)
@@ -124,8 +131,7 @@ extension SearchViewController: UISearchBarDelegate {
         guard let searchedText = searchBar.text else { return }
         self.searchedText = searchedText
         fetchSearchedMovie(query: searchedText, page: currentPage)
-        UserDefaultManager.shared.recentSearchedTextArray.append(searchedText)
-        NotificationCenter.default.post(name: Notification.Name.updateRecentSearchTextArray, object: nil)
+        insertRecentSearchedTextArray(searchedText: searchedText)
     }
 }
 
