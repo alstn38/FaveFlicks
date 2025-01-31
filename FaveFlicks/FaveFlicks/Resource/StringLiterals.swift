@@ -76,7 +76,11 @@ enum StringLiterals {
         static let castTitle: String = "Cast"
         static let posterTitle: String = "Poster"
         static let comma: String = ","
+        static let backdropGuideText: String = "영화 관련 사진이 없습니다."
+        static let castGuideText: String = "영화 등장인물 정보가 없습니다."
+        static let posterGuideText: String = "영화 포스터 정보가 없습니다."
         static let emptySynopsis: String = "영화 줄거리 정보가 없습니다."
+        static let noGenreText: String = "장르없음"
     }
     
     enum Setting {
