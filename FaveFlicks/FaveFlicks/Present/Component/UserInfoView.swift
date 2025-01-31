@@ -57,7 +57,8 @@ final class UserInfoView: UIView {
     
     private let movieBoxCountLabel: UILabel = {
         let label = UILabel()
-        label.text = "\(UserDefaultManager.shared.movieBoxCount)" + StringLiterals.Cinema.movieBoxCount
+        let favoriteMovieCount = UserDefaultManager.shared.favoriteMovieDictionary.keys.count
+        label.text = "\(favoriteMovieCount)" + StringLiterals.Cinema.movieBoxCount
         label.font = .systemFont(ofSize: 12, weight: .bold)
         label.textColor = UIColor(resource: .faveFlicksWhite)
         label.numberOfLines = 1
@@ -108,7 +109,9 @@ final class UserInfoView: UIView {
         profileImageView.image = ProfileImageManager().getCurrentProfileImage()
         nickNameLabel.text = UserDefaultManager.shared.nickName
         joinDateLabel.text = UserDefaultManager.shared.joinDate
-        movieBoxCountLabel.text = "\(UserDefaultManager.shared.movieBoxCount)" + StringLiterals.Cinema.movieBoxCount
+        
+        let favoriteMovieCount = UserDefaultManager.shared.favoriteMovieDictionary.keys.count
+        movieBoxCountLabel.text = "\(favoriteMovieCount)" + StringLiterals.Cinema.movieBoxCount
     }
          
     private func configureView() {
