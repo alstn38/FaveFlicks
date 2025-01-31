@@ -64,6 +64,13 @@ final class DetailMovieViewController: UIViewController {
         
         navigationItem.title = detailMovie.title
         navigationItem.rightBarButtonItem = favoriteButton
+        configureFavoriteButtonImage()
+    }
+    
+    private func configureFavoriteButtonImage() {
+        let isFavoriteMovie = UserDefaultManager.shared.favoriteMovieDictionary.keys.contains(String(detailMovie.id))
+        let buttonImage = isFavoriteMovie ? UIImage(systemName: "heart.fill") : UIImage(systemName: "heart")
+        navigationItem.rightBarButtonItem?.image = buttonImage
     }
     
     private func configureCollectionView() {
@@ -122,7 +129,18 @@ final class DetailMovieViewController: UIViewController {
     }
     
     @objc private func favoriteButtonDidTap(_ sender: UIBarButtonItem) {
+        let movieID = String(detailMovie.id)
+        let isFavoriteMovie = UserDefaultManager.shared.favoriteMovieDictionary.keys.contains(String(detailMovie.id))
         
+        switch isFavoriteMovie {
+        case true:
+            UserDefaultManager.shared.favoriteMovieDictionary.removeValue(forKey: movieID)
+            
+        case false:
+            UserDefaultManager.shared.favoriteMovieDictionary[movieID] = true
+        }
+        
+        configureFavoriteButtonImage()
     }
     
     @objc private func moreHideButtonDidTap(_ sender: UIButton) {
