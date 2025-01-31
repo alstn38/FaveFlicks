@@ -11,6 +11,13 @@ import UIKit
 
 final class SearchCollectionViewCell: UICollectionViewCell {
     
+    private let activityIndicatorView: UIActivityIndicatorView = {
+        let activityIndicatorView = UIActivityIndicatorView(style: .medium)
+        activityIndicatorView.hidesWhenStopped = true
+        activityIndicatorView.color = UIColor(resource: .faveFlicksWhite)
+        return activityIndicatorView
+    }()
+    
     private let posterImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleToFill
@@ -89,18 +96,21 @@ final class SearchCollectionViewCell: UICollectionViewCell {
     func configureCell(_ detailMovie: DetailMovie) {
         movieTitleLabel.text = detailMovie.title
         movieDateLabel.text = detailMovie.releaseDate
-        
-        if let posterPath = detailMovie.posterPath {
-            let url = URL(string: Secret.imageURL + posterPath)
-            posterImageView.kf.setImage(with: url)
-        } else {
-            posterImageView.image = UIImage(resource: .splash)
-        }
-        
         configureGenreView(detailMovie.genreIDArray)
         
         let isFavoriteMovie = UserDefaultManager.shared.favoriteMovieDictionary.keys.contains(String(detailMovie.id))
         favoriteButton.isSelected = isFavoriteMovie
+
+        guard let posterPath = detailMovie.posterPath else {
+            return posterImageView.image = UIImage(resource: .splash)
+        }
+        
+        activityIndicatorView.startAnimating()
+        
+        let url = URL(string: Secret.imageURL + posterPath)
+        posterImageView.kf.setImage(with: url) { [weak self] _ in
+            self?.activityIndicatorView.stopAnimating()
+        }
     }
     
     private func configureGenreView(_ genreIDArray: [Int]) {
@@ -119,11 +129,16 @@ final class SearchCollectionViewCell: UICollectionViewCell {
             movieDateLabel,
             genreStackView,
             favoriteButton,
-            lineView
+            lineView,
+            activityIndicatorView
         )
     }
     
     private func configureLayout() {
+        activityIndicatorView.snp.makeConstraints {
+            $0.center.equalTo(posterImageView)
+        }
+        
         posterImageView.snp.makeConstraints {
             $0.verticalEdges.leading.equalToSuperview().inset(15)
             $0.width.equalTo(80)
