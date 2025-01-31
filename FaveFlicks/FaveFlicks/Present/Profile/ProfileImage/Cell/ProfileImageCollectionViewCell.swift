@@ -33,7 +33,7 @@ final class ProfileImageCollectionViewCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configureView(_ image: UIImage) {
+    func configureView(_ image: UIImage?) {
         profileImageView.image = image
     }
     

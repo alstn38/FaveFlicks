@@ -63,7 +63,7 @@ final class ProfileImageView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configureView(image: UIImage) {
+    func configureView(image: UIImage?) {
         profileImageView.image = image
     }
     
