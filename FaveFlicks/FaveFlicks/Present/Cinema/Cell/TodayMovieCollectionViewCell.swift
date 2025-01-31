@@ -11,6 +11,13 @@ import UIKit
 
 final class TodayMovieCollectionViewCell: UICollectionViewCell {
     
+    private let activityIndicatorView: UIActivityIndicatorView = {
+        let activityIndicatorView = UIActivityIndicatorView(style: .medium)
+        activityIndicatorView.hidesWhenStopped = true
+        activityIndicatorView.color = UIColor(resource: .faveFlicksWhite)
+        return activityIndicatorView
+    }()
+    
     private let posterImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleToFill
@@ -71,15 +78,19 @@ final class TodayMovieCollectionViewCell: UICollectionViewCell {
         let overview = !trendMovie.overview.isEmpty ? trendMovie.overview : StringLiterals.Cinema.emptyOverview
         movieDescriptionLabel.text = overview
         
-        if let posterPath = trendMovie.posterPath {
-            let url = URL(string: Secret.imageURL + posterPath)
-            posterImageView.kf.setImage(with: url)
-        } else {
-            posterImageView.image = UIImage(resource: .splash)
-        }
-        
         let isContainMovieID = UserDefaultManager.shared.favoriteMovieDictionary.keys.contains(String(trendMovie.id))
         favoriteButton.isSelected = isContainMovieID
+        
+        guard let posterPath = trendMovie.posterPath else {
+            return posterImageView.image = UIImage(resource: .splash)
+        }
+        
+        activityIndicatorView.startAnimating()
+        
+        let url = URL(string: Secret.imageURL + posterPath)
+        posterImageView.kf.setImage(with: url) { [weak self] _ in
+            self?.activityIndicatorView.stopAnimating()
+        }
     }
     
     private func configureHierarchy() {
@@ -87,11 +98,16 @@ final class TodayMovieCollectionViewCell: UICollectionViewCell {
             posterImageView,
             movieTitleLabel,
             favoriteButton,
-            movieDescriptionLabel
+            movieDescriptionLabel,
+            activityIndicatorView
         )
     }
     
     private func configureLayout() {
+        activityIndicatorView.snp.makeConstraints {
+            $0.center.equalTo(posterImageView)
+        }
+        
         posterImageView.snp.makeConstraints {
             $0.top.horizontalEdges.equalToSuperview()
             $0.height.greaterThanOrEqualTo(100)
