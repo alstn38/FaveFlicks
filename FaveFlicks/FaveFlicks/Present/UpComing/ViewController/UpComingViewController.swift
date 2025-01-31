@@ -8,9 +8,20 @@
 import UIKit
 
 final class UpComingViewController: UIViewController {
+    
+    private let upComingView = UpComingView()
+    
+    override func loadView() {
+        view = upComingView
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .cyan
+        
+        configureNavigation()
+    }
+    
+    private func configureNavigation() {
+        navigationItem.title = StringLiterals.UpComing.title
     }
 }
