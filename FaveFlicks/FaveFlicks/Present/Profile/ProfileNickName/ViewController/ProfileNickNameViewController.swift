@@ -13,11 +13,7 @@ final class ProfileNickNameViewController: UIViewController {
     private let profileNickNameView = ProfileNickNameView()
     private var nickNameStatus: ProfileNickNameView.NickNameStatus = .invalidRange
     private let profileImageManager = ProfileImageManager()
-    
-    private lazy var selectedProfileImageIndex: Int = {
-        let selectedIndex = Int.random(in: 0..<profileImageManager.profileImageArray.count)
-        return selectedIndex
-    }()
+    private lazy var selectedProfileImageIndex: Int = Int.random(in: 0..<profileImageManager.profileImageCount)
     
     private let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -43,7 +39,9 @@ final class ProfileNickNameViewController: UIViewController {
         super.viewDidLoad()
         
         configureNavigation()
+        configureSelectImageIndex()
         configureProfileImage()
+        configureProfileNickName()
         configureTapGestureRecognizer()
         configureTextField()
         configureButton()
@@ -81,9 +79,26 @@ final class ProfileNickNameViewController: UIViewController {
         }
     }
     
+    private func configureSelectImageIndex() {
+        switch presentationStyleType {
+        case PresentationStyleType.push:
+            selectedProfileImageIndex = Int.random(in: 0..<profileImageManager.profileImageCount)
+            
+        case PresentationStyleType.modal:
+            selectedProfileImageIndex = UserDefaultManager.shared.profileImageIndex
+        }
+    }
+    
     private func configureProfileImage() {
-        let image = profileImageManager.profileImageArray[selectedProfileImageIndex]
+        let image = profileImageManager.getProfileImage(at: selectedProfileImageIndex)
         profileNickNameView.configureView(image: image)
+    }
+    
+    private func configureProfileNickName() {
+        if presentationStyleType == .modal {
+            profileNickNameView.nickNameTextField.text = UserDefaultManager.shared.nickName
+            nickNameTextFieldDidEditingChange(profileNickNameView.nickNameTextField)
+        }
     }
     
     private func configureTapGestureRecognizer() {

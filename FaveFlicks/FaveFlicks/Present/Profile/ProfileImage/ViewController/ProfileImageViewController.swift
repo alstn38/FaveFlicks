@@ -50,7 +50,7 @@ final class ProfileImageViewController: UIViewController {
     }
     
     private func configureProfileImage() {
-        let image = profileImageManager.profileImageArray[selectedProfileImageIndex]
+        let image = profileImageManager.getProfileImage(at: selectedProfileImageIndex)
         profileImageView.configureView(image: image)
     }
     
@@ -68,7 +68,7 @@ final class ProfileImageViewController: UIViewController {
 extension ProfileImageViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return profileImageManager.profileImageArray.count
+        return profileImageManager.profileImageCount
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -77,7 +77,7 @@ extension ProfileImageViewController: UICollectionViewDelegate, UICollectionView
             for: indexPath
         ) as? ProfileImageCollectionViewCell else { return UICollectionViewCell() }
         
-        cell.configureView(profileImageManager.profileImageArray[indexPath.item])
+        cell.configureView(profileImageManager.getProfileImage(at: indexPath.item))
         
         if indexPath.item == selectedProfileImageIndex {
             cell.configureView(isSelected: true)
