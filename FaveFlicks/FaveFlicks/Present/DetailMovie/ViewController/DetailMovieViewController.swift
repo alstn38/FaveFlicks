@@ -13,18 +13,27 @@ final class DetailMovieViewController: UIViewController {
     private let detailMovie: DetailMovie
     private var backdropImageArray: [DetailImage] = [] {
         didSet {
+            let isEmptyBackdropImageArray = backdropImageArray.isEmpty
+            detailMovieView.backdropCollectionView.isHidden = isEmptyBackdropImageArray
+            detailMovieView.backdropGuideLabel.isHidden = !isEmptyBackdropImageArray
             detailMovieView.backdropCollectionView.reloadData()
         }
     }
     
     private var castArray: [Cast] = [] {
         didSet {
+            let isEmptyCastArray = castArray.isEmpty
+            detailMovieView.castCollectionView.isHidden = isEmptyCastArray
+            detailMovieView.castGuideLabel.isHidden = !isEmptyCastArray
             detailMovieView.castCollectionView.reloadData()
         }
     }
     
     private var posterImageArray: [DetailImage] = [] {
         didSet {
+            let isEmptyPosterImageArray = posterImageArray.isEmpty
+            detailMovieView.posterCollectionView.isHidden = isEmptyPosterImageArray
+            detailMovieView.posterGuideLabel.isHidden = !isEmptyPosterImageArray
             detailMovieView.posterCollectionView.reloadData()
         }
     }
