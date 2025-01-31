@@ -111,6 +111,7 @@ final class SearchViewController: UIViewController {
         if currentPage == 1 {
             totalPage = searchMovie.totalPages
             searchedMovieArray = searchMovie.results
+            searchView.searchCollectionView.setContentOffset(.zero, animated: false)
         } else {
             searchedMovieArray.append(contentsOf: searchMovie.results)
         }
