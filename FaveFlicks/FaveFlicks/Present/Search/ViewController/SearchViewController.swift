@@ -90,6 +90,21 @@ final class SearchViewController: UIViewController {
             searchedMovieArray.append(contentsOf: searchMovie.results)
         }
     }
+    
+    @objc private func searchCellFavoriteButtonDidTap(_ sender: UIButton) {
+        let movieID = String(searchedMovieArray[sender.tag].id)
+        let isFavoriteMovie = UserDefaultManager.shared.favoriteMovieDictionary.keys.contains(movieID)
+        
+        switch isFavoriteMovie {
+        case true:
+            UserDefaultManager.shared.favoriteMovieDictionary.removeValue(forKey: movieID)
+            
+        case false:
+            UserDefaultManager.shared.favoriteMovieDictionary[movieID] = true
+        }
+        
+        searchView.searchCollectionView.reloadItems(at: [IndexPath(row: sender.tag, section: 0)])
+    }
 }
 
 // MARK: - UISearchBarDelegate
@@ -119,6 +134,8 @@ extension SearchViewController: UICollectionViewDelegate, UICollectionViewDataSo
         ) as? SearchCollectionViewCell else { return UICollectionViewCell() }
         
         cell.configureCell(searchedMovieArray[indexPath.item])
+        cell.favoriteButton.tag = indexPath.item
+        cell.favoriteButton.addTarget(self, action: #selector(searchCellFavoriteButtonDidTap), for: .touchUpInside)
         return cell
     }
     

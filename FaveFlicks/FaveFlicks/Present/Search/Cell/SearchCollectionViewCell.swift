@@ -42,7 +42,7 @@ final class SearchCollectionViewCell: UICollectionViewCell {
         return stackView
     }()
     
-    private let favoriteButton: UIButton = {
+    let favoriteButton: UIButton = {
         var imageConfiguration = UIImage.SymbolConfiguration(pointSize: 18)
         var configuration = UIButton.Configuration.plain()
         configuration.preferredSymbolConfigurationForImage = imageConfiguration
@@ -98,6 +98,9 @@ final class SearchCollectionViewCell: UICollectionViewCell {
         }
         
         configureGenreView(detailMovie.genreIDArray)
+        
+        let isFavoriteMovie = UserDefaultManager.shared.favoriteMovieDictionary.keys.contains(String(detailMovie.id))
+        favoriteButton.isSelected = isFavoriteMovie
     }
     
     private func configureGenreView(_ genreIDArray: [Int]) {
