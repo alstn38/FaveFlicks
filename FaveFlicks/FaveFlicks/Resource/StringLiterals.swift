@@ -55,6 +55,7 @@ enum StringLiterals {
         static let recentSearchedDelete: String = "전체 삭제"
         static let noRecentSearchedGuide: String = "최근 검색어 내역이 없습니다."
         static let todayMovieTitle: String = "오늘의 영화"
+        static let emptyOverview: String = "영화 줄거리 정보가 없습니다."
     }
     
     enum Search {
