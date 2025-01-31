@@ -43,6 +43,8 @@ final class SearchViewController: UIViewController {
     }
     
     func configureRecentSearchResult(searchedText: String) {
+        self.searchedText = searchedText
+        searchView.searchBar.text = searchedText
         isRecentSearchResult = true
         fetchSearchedMovie(query: searchedText, page: currentPage)
     }
