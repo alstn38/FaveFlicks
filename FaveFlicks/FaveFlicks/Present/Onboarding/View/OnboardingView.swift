@@ -81,7 +81,7 @@ final class OnboardingView: UIView {
     
     private func configureLayout() {
         onboardingImageView.snp.makeConstraints {
-            $0.top.equalTo(safeAreaLayoutGuide).offset(15)
+            $0.top.equalTo(safeAreaLayoutGuide).offset(34)
             $0.horizontalEdges.equalTo(safeAreaLayoutGuide)
             $0.height.equalTo(onboardingImageView.snp.width).multipliedBy(4/3)
         }
