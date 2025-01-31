@@ -204,7 +204,7 @@ final class DetailMovieView: UIView {
         calendarDateLabel.text = detailMovie.releaseDate
         starRateLabel.text = String(format: "%.1f", detailMovie.voteAverage)
         
-        let genreArray = detailMovie.genreIDArray.map { GenreType(num: $0).description }
+        let genreArray = detailMovie.genreIDArray.map { GenreType(num: $0).description }.prefix(2)
         genreLabel.text = genreArray.joined(separator: StringLiterals.DetailMovie.comma)
         
         let overview = !detailMovie.overview.isEmpty ? detailMovie.overview : StringLiterals.DetailMovie.emptySynopsis
