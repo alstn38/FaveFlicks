@@ -148,6 +148,21 @@ final class CinemaViewController: UIViewController {
         UserDefaultManager.shared.recentSearchedTextArray.remove(at: sender.tag)
         recentSearchTextArray = UserDefaultManager.shared.recentSearchedTextArray
     }
+    
+    @objc private func todayMovieCellFavoriteButtonDidTap(_ sender: UIButton) {
+        let movieID = String(trendMovieArray[sender.tag].id)
+        let isContainMovieID = UserDefaultManager.shared.favoriteMovieDictionary.keys.contains(movieID)
+        
+        switch isContainMovieID {
+        case true:
+            UserDefaultManager.shared.favoriteMovieDictionary.removeValue(forKey: movieID)
+            
+        case false:
+            UserDefaultManager.shared.favoriteMovieDictionary[movieID] = true
+        }
+        
+        cinemaView.todayMovieCollectionView.reloadItems(at: [IndexPath(row: sender.tag, section: 0)])
+    }
 }
 
 // MARK: - UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout
@@ -186,7 +201,8 @@ extension CinemaViewController: UICollectionViewDelegate, UICollectionViewDataSo
             ) as? TodayMovieCollectionViewCell else { return UICollectionViewCell() }
             
             cell.configureCell(trendMovieArray[indexPath.item])
-            
+            cell.favoriteButton.tag = indexPath.item
+            cell.favoriteButton.addTarget(self, action: #selector(todayMovieCellFavoriteButtonDidTap), for: .touchUpInside)
             return cell
             
         default:

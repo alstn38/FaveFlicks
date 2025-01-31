@@ -27,7 +27,7 @@ final class TodayMovieCollectionViewCell: UICollectionViewCell {
         return label
     }()
     
-    private let favoriteButton: UIButton = {
+    let favoriteButton: UIButton = {
         var imageConfiguration = UIImage.SymbolConfiguration(pointSize: 18)
         var configuration = UIButton.Configuration.plain()
         configuration.preferredSymbolConfigurationForImage = imageConfiguration
@@ -75,6 +75,9 @@ final class TodayMovieCollectionViewCell: UICollectionViewCell {
         } else {
             posterImageView.image = UIImage(resource: .splash)
         }
+        
+        let isContainMovieID = UserDefaultManager.shared.favoriteMovieDictionary.keys.contains(String(trendMovie.id))
+        favoriteButton.isSelected = isContainMovieID
     }
     
     private func configureHierarchy() {
