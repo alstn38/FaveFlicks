@@ -33,7 +33,7 @@ final class UserInfoView: UIView {
     private let joinDateLabel: UILabel = {
         let label = UILabel()
         label.text = UserDefaultManager.shared.joinDate
-        label.font = .systemFont(ofSize: 11, weight: .regular)
+        label.font = .systemFont(ofSize: 12, weight: .regular)
         label.textColor = UIColor(resource: .faveFlicksGray)
         label.numberOfLines = 1
         return label

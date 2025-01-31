@@ -48,7 +48,7 @@ final class CinemaView: UIView {
     let noRecentSearchedGuideLabel: UILabel = {
         let label = UILabel()
         label.text = StringLiterals.Cinema.noRecentSearchedGuide
-        label.font = .systemFont(ofSize: 11, weight: .regular)
+        label.font = .systemFont(ofSize: 12, weight: .regular)
         label.textColor = UIColor(resource: .faveFlicksGray)
         label.textAlignment = .center
         label.isHidden = true

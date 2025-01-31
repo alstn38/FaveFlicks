@@ -47,7 +47,7 @@ final class TodayMovieCollectionViewCell: UICollectionViewCell {
     
     private let movieDescriptionLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 11, weight: .regular)
+        label.font = .systemFont(ofSize: 12, weight: .regular)
         label.textColor = UIColor(resource: .faveFlicksLightGray)
         label.numberOfLines = 2
         return label
