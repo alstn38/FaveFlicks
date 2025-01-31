@@ -11,6 +11,13 @@ import UIKit
 
 final class CastCollectionViewCell: UICollectionViewCell {
     
+    private let activityIndicatorView: UIActivityIndicatorView = {
+        let activityIndicatorView = UIActivityIndicatorView(style: .medium)
+        activityIndicatorView.hidesWhenStopped = true
+        activityIndicatorView.color = UIColor(resource: .faveFlicksWhite)
+        return activityIndicatorView
+    }()
+    
     private let actorImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
@@ -48,26 +55,35 @@ final class CastCollectionViewCell: UICollectionViewCell {
     }
 
     func configureCell(_ cast: Cast) {
-        if let profilePath = cast.profilePath {
-            let url = URL(string: Secret.imageURL + profilePath)
-            actorImageView.kf.setImage(with: url)
-        } else {
-            actorImageView.image = UIImage(resource: .splash)
-        }
-        
         actorKoreanNameLabel.text = cast.name
         actorCharacterNameLabel.text = cast.character
+        
+        guard let profilePath = cast.profilePath else {
+            return actorImageView.image = UIImage(resource: .splash)
+        }
+        
+        activityIndicatorView.startAnimating()
+        
+        let url = URL(string: Secret.imageURL + profilePath)
+        actorImageView.kf.setImage(with: url) { [weak self] _ in
+            self?.activityIndicatorView.stopAnimating()
+        }
     }
     
     private func configureHierarchy() {
         addSubviews(
             actorImageView,
             actorKoreanNameLabel,
-            actorCharacterNameLabel
+            actorCharacterNameLabel,
+            activityIndicatorView
         )
     }
     
     private func configureLayout() {
+        activityIndicatorView.snp.makeConstraints {
+            $0.center.equalTo(actorImageView)
+        }
+        
         actorImageView.snp.makeConstraints {
             $0.centerY.equalToSuperview()
             $0.leading.equalTo(5)
