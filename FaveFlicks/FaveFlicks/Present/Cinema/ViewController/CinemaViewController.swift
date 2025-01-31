@@ -11,7 +11,7 @@ final class CinemaViewController: UIViewController {
     
     private let cinemaView = CinemaView()
     
-    private var recentSearchTextArray: [String] = UserDefaultManager.shared.recentSearchedTextArrayKey {
+    private var recentSearchTextArray: [String] = UserDefaultManager.shared.recentSearchedTextArray {
         didSet {
             configureRecentSearch()
             cinemaView.recentSearchedCollectionView.reloadData()
@@ -68,7 +68,7 @@ final class CinemaViewController: UIViewController {
             object: nil,
             queue: nil
         ) { [weak self] _ in
-            self?.recentSearchTextArray = UserDefaultManager.shared.recentSearchedTextArrayKey
+            self?.recentSearchTextArray = UserDefaultManager.shared.recentSearchedTextArray
         }
     }
     
@@ -140,13 +140,13 @@ final class CinemaViewController: UIViewController {
     }
     
     @objc private func recentSearchedDeleteButtonDidTap(_ sender: UIButton) {
-        UserDefaultManager.shared.recentSearchedTextArrayKey.removeAll()
-        recentSearchTextArray = UserDefaultManager.shared.recentSearchedTextArrayKey
+        UserDefaultManager.shared.recentSearchedTextArray.removeAll()
+        recentSearchTextArray = UserDefaultManager.shared.recentSearchedTextArray
     }
     
     @objc private func recentSearchedCellDeleteButtonDidTap(_ sender: UIButton) {
-        UserDefaultManager.shared.recentSearchedTextArrayKey.remove(at: sender.tag)
-        recentSearchTextArray = UserDefaultManager.shared.recentSearchedTextArrayKey
+        UserDefaultManager.shared.recentSearchedTextArray.remove(at: sender.tag)
+        recentSearchTextArray = UserDefaultManager.shared.recentSearchedTextArray
     }
 }
 

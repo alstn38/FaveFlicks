@@ -100,7 +100,7 @@ extension SearchViewController: UISearchBarDelegate {
         guard let searchedText = searchBar.text else { return }
         self.searchedText = searchedText
         fetchSearchedMovie(query: searchedText, page: currentPage)
-        UserDefaultManager.shared.recentSearchedTextArrayKey.append(searchedText)
+        UserDefaultManager.shared.recentSearchedTextArray.append(searchedText)
         NotificationCenter.default.post(name: Notification.Name.updateRecentSearchTextArray, object: nil)
     }
 }

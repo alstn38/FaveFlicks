@@ -36,7 +36,7 @@ final class UserDefaultManager {
     var movieBoxCount
     
     @UserDefault(key: recentSearchedTextArrayKey, defaultValue: Array<String>())
-    var recentSearchedTextArrayKey
+    var recentSearchedTextArray
     
     func deleteAccount() {
         hasProfile = false
