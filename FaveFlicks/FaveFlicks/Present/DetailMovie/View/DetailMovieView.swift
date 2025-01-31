@@ -39,6 +39,16 @@ final class DetailMovieView: UIView {
         return collectionView
     }()
     
+    let backdropGuideLabel: UILabel = {
+        let label = UILabel()
+        label.text = StringLiterals.DetailMovie.backdropGuideText
+        label.font = .systemFont(ofSize: 12, weight: .regular)
+        label.textColor = UIColor(resource: .faveFlicksGray)
+        label.textAlignment = .center
+        label.isHidden = true
+        return label
+    }()
+    
     let backdropPageControl: UIPageControl = {
         let pageControl = UIPageControl()
         pageControl.isUserInteractionEnabled = false
@@ -164,6 +174,16 @@ final class DetailMovieView: UIView {
         return collectionView
     }()
     
+    let castGuideLabel: UILabel = {
+        let label = UILabel()
+        label.text = StringLiterals.DetailMovie.castGuideText
+        label.font = .systemFont(ofSize: 12, weight: .regular)
+        label.textColor = UIColor(resource: .faveFlicksGray)
+        label.textAlignment = .center
+        label.isHidden = true
+        return label
+    }()
+    
     private let posterTitleLabel: UILabel = {
         let label = UILabel()
         label.text = StringLiterals.DetailMovie.posterTitle
@@ -187,6 +207,16 @@ final class DetailMovieView: UIView {
         return collectionView
     }()
     
+    let posterGuideLabel: UILabel = {
+        let label = UILabel()
+        label.text = StringLiterals.DetailMovie.posterGuideText
+        label.font = .systemFont(ofSize: 12, weight: .regular)
+        label.textColor = UIColor(resource: .faveFlicksGray)
+        label.textAlignment = .center
+        label.isHidden = true
+        return label
+    }()
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         
@@ -206,6 +236,10 @@ final class DetailMovieView: UIView {
         
         let genreArray = detailMovie.genreIDArray.map { GenreType(num: $0).description }.prefix(2)
         genreLabel.text = genreArray.joined(separator: StringLiterals.DetailMovie.comma)
+        
+        if genreArray.isEmpty {
+            genreLabel.text = StringLiterals.DetailMovie.noGenreText
+        }
         
         let overview = !detailMovie.overview.isEmpty ? detailMovie.overview : StringLiterals.DetailMovie.emptySynopsis
         synopsisDescriptionLabel.text = overview
@@ -227,6 +261,7 @@ final class DetailMovieView: UIView {
         
         contentView.addSubviews(
             backdropCollectionView,
+            backdropGuideLabel,
             backdropPageControl,
             movieInfoStackView,
             synopsisTitleLabel,
@@ -234,8 +269,10 @@ final class DetailMovieView: UIView {
             synopsisDescriptionLabel,
             castTitleLabel,
             castCollectionView,
+            castGuideLabel,
             posterTitleLabel,
-            posterCollectionView
+            posterCollectionView,
+            posterGuideLabel
         )
         
         movieInfoStackView.addArrangedSubviews(
@@ -263,6 +300,10 @@ final class DetailMovieView: UIView {
         backdropCollectionView.snp.makeConstraints {
             $0.top.horizontalEdges.equalToSuperview()
             $0.height.equalTo(UIScreen.main.bounds.width * 9 / 16)
+        }
+        
+        backdropGuideLabel.snp.makeConstraints {
+            $0.center.equalTo(backdropCollectionView)
         }
         
         backdropPageControl.snp.makeConstraints {
@@ -324,6 +365,10 @@ final class DetailMovieView: UIView {
             $0.height.equalTo(130)
         }
         
+        castGuideLabel.snp.makeConstraints {
+            $0.center.equalTo(castCollectionView)
+        }
+        
         posterTitleLabel.snp.makeConstraints {
             $0.top.equalTo(castCollectionView.snp.bottom).offset(20)
             $0.leading.equalToSuperview().offset(15)
@@ -334,6 +379,10 @@ final class DetailMovieView: UIView {
             $0.horizontalEdges.equalToSuperview()
             $0.height.equalTo(120)
             $0.bottom.equalToSuperview().inset(15)
+        }
+        
+        posterGuideLabel.snp.makeConstraints {
+            $0.center.equalTo(posterCollectionView)
         }
     }
 }
