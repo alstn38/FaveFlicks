@@ -57,6 +57,23 @@ final class ProfileNickNameView: UIView {
         return label
     }()
     
+    private let mbtiTitleLabel: UILabel = {
+        let label = UILabel()
+        label.text = StringLiterals.ProfileNickName.mbtiTitleText
+        label.textColor = UIColor(resource: .faveFlicksWhite)
+        label.font = .systemFont(ofSize: 14, weight: .bold)
+        return label
+    }()
+    
+    lazy var extraversionButton = makeMBTIButton(type: .extraversion)
+    lazy var introversionButton = makeMBTIButton(type: .introversion)
+    lazy var sensingButton = makeMBTIButton(type: .sensing)
+    lazy var intuitionButton = makeMBTIButton(type: .intuition)
+    lazy var thinkingButton = makeMBTIButton(type: .thinking)
+    lazy var feelingButton = makeMBTIButton(type: .feeling)
+    lazy var judgingButton = makeMBTIButton(type: .judging)
+    lazy var perceivingButton = makeMBTIButton(type: .perceiving)
+    
     let confirmButton: UIButton = {
         var titleContainer = AttributeContainer()
         titleContainer.font = UIFont.systemFont(ofSize: 14, weight: .bold)
@@ -105,6 +122,15 @@ final class ProfileNickNameView: UIView {
             nickNameTextField,
             lineView,
             nickNameStatusLabel,
+            mbtiTitleLabel,
+            extraversionButton,
+            introversionButton,
+            sensingButton,
+            intuitionButton,
+            thinkingButton,
+            feelingButton,
+            judgingButton,
+            perceivingButton,
             confirmButton
         )
     }
@@ -138,11 +164,76 @@ final class ProfileNickNameView: UIView {
             $0.horizontalEdges.equalTo(safeAreaLayoutGuide).inset(30)
         }
         
+        mbtiTitleLabel.snp.makeConstraints {
+            $0.top.equalTo(lineView.snp.bottom).offset(50)
+            $0.leading.equalTo(15)
+        }
+        
+        extraversionButton.snp.makeConstraints {
+            $0.top.equalTo(mbtiTitleLabel.snp.top)
+            $0.trailing.equalTo(sensingButton.snp.leading).offset(-10)
+            $0.size.equalTo(50)
+        }
+        
+        introversionButton.snp.makeConstraints {
+            $0.top.equalTo(extraversionButton.snp.bottom).offset(10)
+            $0.trailing.equalTo(sensingButton.snp.leading).offset(-10)
+            $0.size.equalTo(50)
+        }
+        
+        sensingButton.snp.makeConstraints {
+            $0.top.equalTo(mbtiTitleLabel.snp.top)
+            $0.trailing.equalTo(thinkingButton.snp.leading).offset(-10)
+            $0.size.equalTo(50)
+        }
+        
+        intuitionButton.snp.makeConstraints {
+            $0.top.equalTo(sensingButton.snp.bottom).offset(10)
+            $0.trailing.equalTo(thinkingButton.snp.leading).offset(-10)
+            $0.size.equalTo(50)
+        }
+        
+        thinkingButton.snp.makeConstraints {
+            $0.top.equalTo(mbtiTitleLabel.snp.top)
+            $0.trailing.equalTo(judgingButton.snp.leading).offset(-10)
+            $0.size.equalTo(50)
+        }
+        
+        feelingButton.snp.makeConstraints {
+            $0.top.equalTo(thinkingButton.snp.bottom).offset(10)
+            $0.trailing.equalTo(judgingButton.snp.leading).offset(-10)
+            $0.size.equalTo(50)
+        }
+        
+        judgingButton.snp.makeConstraints {
+            $0.top.equalTo(mbtiTitleLabel.snp.top)
+            $0.trailing.equalTo(safeAreaLayoutGuide).offset(-10)
+            $0.size.equalTo(50)
+        }
+        
+        perceivingButton.snp.makeConstraints {
+            $0.top.equalTo(judgingButton.snp.bottom).offset(10)
+            $0.trailing.equalTo(safeAreaLayoutGuide).offset(-10)
+            $0.size.equalTo(50)
+        }
+        
         confirmButton.snp.makeConstraints {
-            $0.top.equalTo(nickNameStatusLabel.snp.bottom).offset(20)
+            $0.bottom.equalTo(keyboardLayoutGuide.snp.top).offset(-50)
             $0.horizontalEdges.equalTo(safeAreaLayoutGuide).inset(15)
             $0.height.equalTo(38)
         }
+    }
+    
+    private func makeMBTIButton(type: MBTIButtonType) -> UIButton {
+        let button = UIButton()
+        button.setTitle(type.description, for: .normal)
+        button.setTitleColor(UIColor(resource: .faveFlicksLightGray), for: .normal)
+        button.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
+        button.layer.cornerRadius = 25
+        button.layer.borderWidth = 1
+        button.layer.borderColor = UIColor(resource: .faveFlicksLightGray).cgColor
+        button.layer.masksToBounds = true
+        return button
     }
 }
 
@@ -176,25 +267,27 @@ extension ProfileNickNameView {
 // MARK: - MBTIType
 extension ProfileNickNameView {
     
-    enum MBTIType {
-        enum EnergyFocus: String {
-            case extraversion = "E"
-            case introversion = "I"
-        }
+    enum MBTIButtonType: Int, CaseIterable {
+        case extraversion
+        case introversion
+        case sensing
+        case intuition
+        case thinking
+        case feeling
+        case judging
+        case perceiving
         
-        enum PerceivingFunction: String {
-            case sensing = "S"
-            case intuition = "N"
-        }
-        
-        enum JudgingFunction: String {
-            case thinking = "T"
-            case feeling = "F"
-        }
-        
-        enum LifestylePreference: String {
-            case judging = "J"
-            case perceiving = "P"
+        var description: String {
+            switch self {
+            case .extraversion: return "E"
+            case .introversion: return "I"
+            case .sensing: return "S"
+            case .intuition: return "N"
+            case .thinking: return "T"
+            case .feeling: return "F"
+            case .judging: return "J"
+            case .perceiving: return "P"
+            }
         }
     }
 }
