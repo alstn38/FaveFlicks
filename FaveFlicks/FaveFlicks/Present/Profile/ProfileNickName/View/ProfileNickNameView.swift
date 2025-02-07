@@ -75,18 +75,14 @@ final class ProfileNickNameView: UIView {
     lazy var perceivingButton = makeMBTIButton(type: .perceiving)
     
     let confirmButton: UIButton = {
-        var titleContainer = AttributeContainer()
-        titleContainer.font = UIFont.systemFont(ofSize: 14, weight: .bold)
-        
-        var configuration = UIButton.Configuration.plain()
-        configuration.attributedTitle = AttributedString(StringLiterals.ProfileNickName.confirmButtonTitle, attributes: titleContainer)
-        configuration.baseBackgroundColor = UIColor(resource: .faveFlicksBlack)
-        configuration.baseForegroundColor = UIColor(resource: .faveFlicsMain)
-        
-        let button = UIButton(configuration: configuration)
+        let button = UIButton()
+        button.setTitle(StringLiterals.ProfileNickName.confirmButtonTitle, for: .normal)
+        button.setTitleColor(UIColor(resource: .faveFlicksWhite), for: .normal)
+        button.backgroundColor = UIColor(resource: .faveFlicksGray)
+        button.titleLabel?.font = .systemFont(ofSize: 14, weight: .bold)
         button.layer.cornerRadius = 20
-        button.layer.borderWidth = 1
-        button.layer.borderColor = UIColor(resource: .faveFlicsMain).cgColor
+        button.isEnabled = false
+        button.clipsToBounds = true
         return button
     }()
     
