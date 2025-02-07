@@ -172,3 +172,29 @@ extension ProfileNickNameView {
         }
     }
 }
+
+// MARK: - MBTIType
+extension ProfileNickNameView {
+    
+    enum MBTIType {
+        enum EnergyFocus: String {
+            case extraversion = "E"
+            case introversion = "I"
+        }
+        
+        enum PerceivingFunction: String {
+            case sensing = "S"
+            case intuition = "N"
+        }
+        
+        enum JudgingFunction: String {
+            case thinking = "T"
+            case feeling = "F"
+        }
+        
+        enum LifestylePreference: String {
+            case judging = "J"
+            case perceiving = "P"
+        }
+    }
+}
