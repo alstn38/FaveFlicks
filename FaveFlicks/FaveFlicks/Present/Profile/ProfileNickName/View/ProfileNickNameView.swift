@@ -74,6 +74,17 @@ final class ProfileNickNameView: UIView {
     lazy var judgingButton = makeMBTIButton(type: .judging)
     lazy var perceivingButton = makeMBTIButton(type: .perceiving)
     
+    private lazy var mbtiButtonDictionary: [MBTIButtonType: UIButton] = [
+        .extraversion: extraversionButton,
+        .introversion: introversionButton,
+        .sensing: sensingButton,
+        .intuition: intuitionButton,
+        .thinking: thinkingButton,
+        .feeling: feelingButton,
+        .judging: judgingButton,
+        .perceiving: perceivingButton
+    ]
+    
     let confirmButton: UIButton = {
         let button = UIButton()
         button.setTitle(StringLiterals.ProfileNickName.confirmButtonTitle, for: .normal)
@@ -103,8 +114,22 @@ final class ProfileNickNameView: UIView {
         profileImageView.image = image
     }
     
-    func configureNickNameStatus(_ status: NickNameStatus) {
+    func configureNickNameStatus(_ status: ProfileNickNameViewModel.NickNameStatus) {
         nickNameStatusLabel.text = status.description
+    }
+    
+    func configureMBTIButton(_ type: MBTIButtonType, activate: Bool) {
+        guard let mbtiButton = mbtiButtonDictionary[type] else { return }
+        let backgroundColor = activate ? UIColor(resource: .faveFlicsMain) : .clear
+        let layerColor = activate ? UIColor(resource: .faveFlicsMain) : UIColor(resource: .faveFlicksLightGray)
+        mbtiButton.backgroundColor = backgroundColor
+        mbtiButton.layer.borderColor = layerColor.cgColor
+    }
+    
+    func configureConfirmButton(_ status: Bool) {
+        let buttonColor = status ? UIColor(resource: .faveFlicsMain) : UIColor(resource: .faveFlicksLightGray)
+        confirmButton.backgroundColor = buttonColor
+        confirmButton.isEnabled = status
     }
     
     private func configureView() {
@@ -229,34 +254,8 @@ final class ProfileNickNameView: UIView {
         button.layer.borderWidth = 1
         button.layer.borderColor = UIColor(resource: .faveFlicksLightGray).cgColor
         button.layer.masksToBounds = true
+        button.tag = type.rawValue
         return button
-    }
-}
-
-// MARK: - NickNameStatus
-extension ProfileNickNameView {
-    
-    enum NickNameStatus {
-        case empty
-        case possible
-        case invalidRange
-        case hasSectionSign
-        case hasNumber
-        
-        var description: String {
-            switch self {
-            case .empty:
-                return ""
-            case .possible:
-                return StringLiterals.ProfileNickName.possibleStatus
-            case .invalidRange:
-                return StringLiterals.ProfileNickName.invalidRangeStatus
-            case .hasSectionSign:
-                return StringLiterals.ProfileNickName.hasSectionSignStatus
-            case .hasNumber:
-                return StringLiterals.ProfileNickName.hasNumberStatus
-            }
-        }
     }
 }
 
