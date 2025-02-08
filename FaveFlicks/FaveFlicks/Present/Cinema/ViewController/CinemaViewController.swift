@@ -135,7 +135,8 @@ final class CinemaViewController: UIViewController {
     }
     
     @objc private func userInfoViewDidTap(_ sender: UITapGestureRecognizer) {
-        let profileNickNameViewController = ProfileNickNameViewController(presentationStyleType: .modal)
+        let profileNickNameViewModel = ProfileNickNameViewModel(presentationStyleType: .modal)
+        let profileNickNameViewController = ProfileNickNameViewController(viewModel: profileNickNameViewModel)
         let profileNickNameNavigationController = UINavigationController(rootViewController: profileNickNameViewController)
         profileNickNameNavigationController.modalPresentationStyle = .pageSheet
         

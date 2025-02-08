@@ -31,7 +31,8 @@ final class OnboardingViewController: UIViewController {
     }
     
     @objc private func startButtonDidTap(_ sender: UIButton) {
-        let profileNickNameViewController = ProfileNickNameViewController(presentationStyleType: .push)
+        let profileNickNameViewModel = ProfileNickNameViewModel(presentationStyleType: .push)
+        let profileNickNameViewController = ProfileNickNameViewController(viewModel: profileNickNameViewModel)
         navigationController?.pushViewController(profileNickNameViewController, animated: true)
     }
 }
