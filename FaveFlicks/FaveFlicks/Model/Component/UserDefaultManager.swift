@@ -20,6 +20,7 @@ final class UserDefaultManager {
     private static let movieBoxCountKey: String = "movieBoxCountKey"
     private static let recentSearchedTextArrayKey: String = "recentSearchedTextArrayKey"
     private static let favoriteMovieDictionaryKey: String = "favoriteMovieDictionaryKey"
+    private static let userMBTIkey: String = "userMBTIkey"
     
     @UserDefault(key: hasProfileKey, defaultValue: false)
     var hasProfile
@@ -46,6 +47,9 @@ final class UserDefaultManager {
             NotificationCenter.default.post(name: Notification.Name.updateFavoriteMovieDictionary, object: nil)
         }
     }
+    
+    @UserDefault(key: userMBTIkey, defaultValue: "")
+    var userMBTI
     
     func deleteAccount() {
         hasProfile = false
