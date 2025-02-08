@@ -1,5 +1,5 @@
 //
-//  PublishSubject.swift
+//  CurrentValueRelay.swift
 //  FaveFlicks
 //
 //  Created by 강민수 on 2/7/25.
@@ -7,9 +7,9 @@
 
 import Foundation
 
-final class PublishSubject<T> {
+final class CurrentValueRelay<T> {
     
-    private var value: T {
+    private(set) var value: T {
         didSet {
             closure?(value)
         }
@@ -17,7 +17,7 @@ final class PublishSubject<T> {
     
     private var closure: ((T) -> Void)?
     
-    init(value: T) {
+    init(_ value: T) {
         self.value = value
     }
     

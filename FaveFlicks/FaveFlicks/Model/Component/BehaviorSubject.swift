@@ -17,7 +17,7 @@ final class BehaviorSubject<T> {
     
     private var closure: ((T) -> Void)?
     
-    init(value: T) {
+    init(_ value: T) {
         self.value = value
     }
     
