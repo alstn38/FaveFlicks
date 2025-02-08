@@ -9,20 +9,29 @@ import UIKit
 
 final class ProfileNickNameViewController: UIViewController {
     
-    private let presentationStyleType: PresentationStyleType
+    private let viewModel: ProfileNickNameViewModel
+    private let input: ProfileNickNameViewModel.Input
+    private let output: ProfileNickNameViewModel.Output
     private let profileNickNameView = ProfileNickNameView()
-    private var nickNameStatus: ProfileNickNameView.NickNameStatus = .invalidRange
-    private let profileImageManager = ProfileImageManager()
-    private lazy var selectedProfileImageIndex: Int = Int.random(in: 0..<profileImageManager.profileImageCount)
     
-    private let dateFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateFormat = StringLiterals.ProfileNickName.joinDateFormatter
-        return formatter
-    }()
+    private let viewDidLoadSubject: CurrentValueRelay<Void> = CurrentValueRelay(())
+    private let profileImageViewDidTapSubject: CurrentValueRelay<Void> = CurrentValueRelay(())
+    private let profileImageDidChangeSubject: CurrentValueRelay<Int> = CurrentValueRelay(0)
+    private let nickNameTextFieldEditingChangeSubject: CurrentValueRelay<String?> = CurrentValueRelay(nil)
+    private let mbtiButtonDidTapSubject: CurrentValueRelay<ProfileNickNameView.MBTIButtonType> = CurrentValueRelay(.extraversion)
+    private let confirmButtonDidTapSubject: CurrentValueRelay<Void> = CurrentValueRelay(())
     
-    init(presentationStyleType: PresentationStyleType) {
-        self.presentationStyleType = presentationStyleType
+    init(viewModel: ProfileNickNameViewModel) {
+        self.viewModel = viewModel
+        self.input = ProfileNickNameViewModel.Input(
+            viewDidLoad: viewDidLoadSubject,
+            profileImageViewDidTap: profileImageViewDidTapSubject,
+            profileImageDidChange: profileImageDidChangeSubject,
+            nickNameTextFieldEditingChange: nickNameTextFieldEditingChangeSubject,
+            mbtiButtonDidTap: mbtiButtonDidTapSubject,
+            confirmButtonDidTap: confirmButtonDidTapSubject
+        )
+        self.output = viewModel.transform(from: input)
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -38,27 +47,70 @@ final class ProfileNickNameViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        configureBind()
         configureNavigation()
-        configureSelectImageIndex()
-        configureProfileImage()
         configureProfileNickName()
         configureTapGestureRecognizer()
         configureTextField()
         configureButton()
+        viewDidLoadSubject.send(())
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         view.endEditing(true)
     }
     
+    private func configureBind() {
+        output.profileImageIndex.bind { [weak self] index in
+            guard let self else { return }
+            let profileImage = viewModel.profileImageManager.getProfileImage(at: index)
+            profileNickNameView.configureView(image: profileImage)
+        }
+        
+        output.nickNameStatusText.bind { [weak self] status in
+            guard let self else { return }
+            profileNickNameView.configureNickNameStatus(status)
+        }
+        
+        output.mbtiButtonStatus.bind { [weak self] (mbtiButtonType, activate) in
+            guard let self else { return }
+            profileNickNameView.configureMBTIButton(mbtiButtonType, activate: activate)
+        }
+        
+        output.confirmButtonStatus.bind { [weak self] status in
+            guard let self else { return }
+            profileNickNameView.configureConfirmButton(status)
+        }
+        
+        output.moveToOtherViewController.bind { [weak self] screenTransitionType in
+            guard let self else { return }
+            switch screenTransitionType {
+            case .changeRootView:
+                changeRootView()
+                
+            case .dismiss:
+                dismiss(animated: true)
+                
+            case .pushProfileImageViewController(let imageIndex):
+                let isEditMode = viewModel.presentationStyleType == .modal ? true : false
+                let profileImageViewController = ProfileImageViewController(
+                    selectedProfileImageIndex: imageIndex,
+                    isEditMode: isEditMode
+                )
+                profileImageViewController.delegate = self
+                navigationController?.pushViewController(profileImageViewController, animated: true)
+            }
+        }
+    }
+    
     private func configureNavigation() {
         navigationItem.backButtonTitle = StringLiterals.NavigationItem.backButtonTitle
         
-        switch presentationStyleType {
-        case PresentationStyleType.push:
+        switch viewModel.presentationStyleType {
+        case .push:
             navigationItem.title = StringLiterals.ProfileNickName.settingTitle
             
-        case PresentationStyleType.modal:
+        case .modal:
             navigationItem.title = StringLiterals.ProfileNickName.editTitle
             let cancelButton = UIBarButtonItem(
                 image: UIImage(systemName: "xmark"),
@@ -79,23 +131,8 @@ final class ProfileNickNameViewController: UIViewController {
         }
     }
     
-    private func configureSelectImageIndex() {
-        switch presentationStyleType {
-        case PresentationStyleType.push:
-            selectedProfileImageIndex = Int.random(in: 0..<profileImageManager.profileImageCount)
-            
-        case PresentationStyleType.modal:
-            selectedProfileImageIndex = UserDefaultManager.shared.profileImageIndex
-        }
-    }
-    
-    private func configureProfileImage() {
-        let image = profileImageManager.getProfileImage(at: selectedProfileImageIndex)
-        profileNickNameView.configureView(image: image)
-    }
-    
     private func configureProfileNickName() {
-        if presentationStyleType == .modal {
+        if viewModel.presentationStyleType == .modal {
             profileNickNameView.nickNameTextField.text = UserDefaultManager.shared.nickName
             nickNameTextFieldDidEditingChange(profileNickNameView.nickNameTextField)
         }
@@ -108,74 +145,37 @@ final class ProfileNickNameViewController: UIViewController {
     
     private func configureTextField() {
         profileNickNameView.nickNameTextField.delegate = self
-        profileNickNameView.nickNameTextField.addTarget(self, action: #selector(nickNameTextFieldDidEditingChange), for: .editingChanged)
+        profileNickNameView.nickNameTextField.addTarget(
+            self,
+            action: #selector(nickNameTextFieldDidEditingChange),
+            for: .editingChanged
+        )
     }
     
     private func configureButton() {
-        switch presentationStyleType {
-        case PresentationStyleType.push:
-            profileNickNameView.confirmButton.addTarget(self, action: #selector(confirmButtonDidTap), for: .touchUpInside)
+        switch viewModel.presentationStyleType {
+        case .push:
+            profileNickNameView.confirmButton.addTarget(
+                self,
+                action: #selector(confirmButtonDidTap),
+                for: .touchUpInside
+            )
             
-        case PresentationStyleType.modal:
+        case .modal:
             profileNickNameView.confirmButton.isHidden = true
         }
+        
+        profileNickNameView.extraversionButton.addTarget(self, action: #selector(mbtiButtonDidTap), for: .touchUpInside)
+        profileNickNameView.introversionButton.addTarget(self, action: #selector(mbtiButtonDidTap), for: .touchUpInside)
+        profileNickNameView.sensingButton.addTarget(self, action: #selector(mbtiButtonDidTap), for: .touchUpInside)
+        profileNickNameView.intuitionButton.addTarget(self, action: #selector(mbtiButtonDidTap), for: .touchUpInside)
+        profileNickNameView.thinkingButton.addTarget(self, action: #selector(mbtiButtonDidTap), for: .touchUpInside)
+        profileNickNameView.feelingButton.addTarget(self, action: #selector(mbtiButtonDidTap), for: .touchUpInside)
+        profileNickNameView.judgingButton.addTarget(self, action: #selector(mbtiButtonDidTap), for: .touchUpInside)
+        profileNickNameView.perceivingButton.addTarget(self, action: #selector(mbtiButtonDidTap), for: .touchUpInside)
     }
     
-    private func saveUserInfo() {
-        UserDefaultManager.shared.hasProfile = true
-        UserDefaultManager.shared.profileImageIndex = selectedProfileImageIndex
-        UserDefaultManager.shared.nickName = profileNickNameView.nickNameTextField.text ?? ""
-        
-        if presentationStyleType == .push {
-            UserDefaultManager.shared.joinDate = dateFormatter.string(from: Date())
-        }
-        
-        NotificationCenter.default.post(name: Notification.Name.updateUserInfo, object: nil)
-    }
-    
-    @objc private func profileImageViewDidTap(_ sender: UIView) {
-        let profileImageViewController = ProfileImageViewController(
-            selectedProfileImageIndex: selectedProfileImageIndex,
-            isEditMode: presentationStyleType == .modal
-        )
-        profileImageViewController.delegate = self
-        navigationController?.pushViewController(profileImageViewController, animated: true)
-    }
-    
-    @objc private func nickNameTextFieldDidEditingChange(_ sender: UITextField) {
-        let sectionSignArray: [Character] = ["@", "#", "$", "%"]
-        guard let inputNickName = sender.text else { return }
-        guard !inputNickName.isEmpty else {
-            nickNameStatus = .invalidRange
-            return profileNickNameView.configureNickNameStatus(.empty)
-        }
-        
-        guard inputNickName.count >= 2 && inputNickName.count < 10 else {
-            nickNameStatus = .invalidRange
-            return profileNickNameView.configureNickNameStatus(.invalidRange)
-        }
-        
-        guard !inputNickName.contains(where: { sectionSignArray.contains($0) }) else {
-            nickNameStatus = .hasSectionSign
-            return profileNickNameView.configureNickNameStatus(.hasSectionSign)
-        }
-        
-        guard !inputNickName.contains(where: { $0.isNumber }) else {
-            nickNameStatus = .hasNumber
-            return profileNickNameView.configureNickNameStatus(.hasNumber)
-        }
-        
-        nickNameStatus = .possible
-        profileNickNameView.configureNickNameStatus(.possible)
-    }
-    
-    @objc private func confirmButtonDidTap(_ sender: UIButton) {
-        guard nickNameStatus == .possible else {
-            return presentAlert(title: StringLiterals.Alert.invalidNickName, message: nickNameStatus.description)
-        }
-        
-        saveUserInfo()
-        
+    private func changeRootView() {
         guard
             let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
             let window = windowScene.windows.first
@@ -190,17 +190,29 @@ final class ProfileNickNameViewController: UIViewController {
         window.rootViewController = faveFlicksTabBarController
     }
     
+    @objc private func profileImageViewDidTap(_ sender: UIView) {
+        profileImageViewDidTapSubject.send(())
+    }
+    
+    @objc private func nickNameTextFieldDidEditingChange(_ sender: UITextField) {
+        nickNameTextFieldEditingChangeSubject.send(sender.text)
+    }
+    
+    @objc private func mbtiButtonDidTap(_ sender: UIButton) {
+        guard let buttonType = ProfileNickNameView.MBTIButtonType(rawValue: sender.tag) else { return }
+        mbtiButtonDidTapSubject.send(buttonType)
+    }
+    
+    @objc private func confirmButtonDidTap(_ sender: UIButton) {
+        confirmButtonDidTapSubject.send(())
+    }
+    
     @objc private func cancelButtonDidTap(_ sender: UIBarButtonItem) {
         dismiss(animated: true)
     }
     
     @objc private func saveButtonDidTap(_ sender: UIBarButtonItem) {
-        guard nickNameStatus == .possible else {
-            return presentAlert(title: StringLiterals.Alert.invalidNickName, message: nickNameStatus.description)
-        }
-        
-        saveUserInfo()
-        dismiss(animated: true)
+        confirmButtonDidTapSubject.send(())
     }
 }
 
@@ -217,16 +229,6 @@ extension ProfileNickNameViewController: UITextFieldDelegate {
 extension ProfileNickNameViewController: ProfileImageViewControllerDelegate {
     
     func viewController(_ viewController: UIViewController, didSelectImageIndex: Int) {
-        selectedProfileImageIndex = didSelectImageIndex
-        configureProfileImage()
-    }
-}
-
-// MARK: - PresentationStyle
-extension ProfileNickNameViewController {
-    
-    enum PresentationStyleType {
-        case push
-        case modal
+        profileImageDidChangeSubject.send(didSelectImageIndex)
     }
 }
