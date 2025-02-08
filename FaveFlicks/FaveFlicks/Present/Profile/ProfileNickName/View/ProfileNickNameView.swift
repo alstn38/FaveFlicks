@@ -115,6 +115,8 @@ final class ProfileNickNameView: UIView {
     }
     
     func configureNickNameStatus(_ status: ProfileNickNameViewModel.NickNameStatus) {
+        let textColor = status == .possible ? UIColor(resource: .faveFlicsMain) : UIColor(resource: .faveFlicksRed)
+        nickNameStatusLabel.textColor = textColor
         nickNameStatusLabel.text = status.description
     }
     
