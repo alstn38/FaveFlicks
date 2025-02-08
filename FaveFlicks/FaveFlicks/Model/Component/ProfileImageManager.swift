@@ -17,6 +17,10 @@ final class ProfileImageManager {
         return profileImageArray.count
     }
     
+    var randomImageIndex: Int {
+        return Int.random(in: 0..<profileImageArray.count)
+    }
+    
     func getCurrentProfileImage() -> UIImage {
         let currentImageIndex = UserDefaultManager.shared.profileImageIndex
         return profileImageArray[currentImageIndex]
