@@ -13,19 +13,22 @@ protocol ProfileImageViewControllerDelegate: AnyObject {
 
 final class ProfileImageViewController: UIViewController {
     
+    private let viewModel: ProfileImageViewModel
+    private let input: ProfileImageViewModel.Input
+    private let output: ProfileImageViewModel.Output
     private let profileImageView = ProfileImageView()
-    private var selectedProfileImageIndex: Int
-    private var isEditMode: Bool
-    private let profileImageManager = ProfileImageManager()
     weak var delegate: ProfileImageViewControllerDelegate?
+    
+    private let profileImageDidSelectSubject: CurrentValueRelay<Int> = CurrentValueRelay(0)
 
     override func loadView() {
         view = profileImageView
     }
     
-    init(selectedProfileImageIndex: Int, isEditMode: Bool) {
-        self.selectedProfileImageIndex = selectedProfileImageIndex
-        self.isEditMode = isEditMode
+    init(viewModel: ProfileImageViewModel) {
+        self.viewModel = viewModel
+        self.input = ProfileImageViewModel.Input(profileImageDidSelect: profileImageDidSelectSubject)
+        self.output = viewModel.transform(from: input)
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -37,21 +40,25 @@ final class ProfileImageViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        configureBind()
         configureNavigation()
-        configureProfileImage()
         configureCollectionView()
     }
     
+    private func configureBind() {
+        output.profileImageIndex.bind { [weak self] past, current in
+            guard let self else { return }
+            configureProfileImageCell(at: past, isSelected: false)
+            configureProfileImageCell(at: current, isSelected: true)
+            configureProfileImage(at: current)
+        }
+    }
+    
     private func configureNavigation() {
-        let title = isEditMode
+        let title = viewModel.isEditMode
         ? StringLiterals.ProfileImage.editTitle
         : StringLiterals.ProfileImage.settingTitle
         navigationItem.title = title
-    }
-    
-    private func configureProfileImage() {
-        let image = profileImageManager.getProfileImage(at: selectedProfileImageIndex)
-        profileImageView.configureView(image: image)
     }
     
     private func configureCollectionView() {
@@ -62,13 +69,28 @@ final class ProfileImageViewController: UIViewController {
             forCellWithReuseIdentifier: ProfileImageCollectionViewCell.identifier
         )
     }
+    
+    private func configureProfileImage(at imageIndex: Int) {
+        let image = viewModel.profileImageManager.getProfileImage(at: imageIndex)
+        profileImageView.configureView(image: image)
+    }
+    
+    private func configureProfileImageCell(at imageIndex: Int, isSelected: Bool) {
+        DispatchQueue.main.async {
+            guard let cell = self.profileImageView.profileImageCollectionView.cellForItem(
+                at: IndexPath(item: imageIndex, section: 0)
+            ) as? ProfileImageCollectionViewCell else { return }
+            
+            cell.configureView(isSelected: isSelected)
+        }
+    }
 }
 
 // MARK: - UICollectionViewDelegate, UICollectionViewDataSource
 extension ProfileImageViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return profileImageManager.profileImageCount
+        return viewModel.profileImageManager.profileImageCount
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -77,26 +99,12 @@ extension ProfileImageViewController: UICollectionViewDelegate, UICollectionView
             for: indexPath
         ) as? ProfileImageCollectionViewCell else { return UICollectionViewCell() }
         
-        cell.configureView(profileImageManager.getProfileImage(at: indexPath.item))
-        
-        if indexPath.item == selectedProfileImageIndex {
-            cell.configureView(isSelected: true)
-        }
-        
+        cell.configureView(viewModel.profileImageManager.getProfileImage(at: indexPath.item))
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        guard let deSelectedCell = collectionView.cellForItem(
-            at: IndexPath(item: selectedProfileImageIndex, section: 0)
-        ) as? ProfileImageCollectionViewCell else { return }
-        deSelectedCell.configureView(isSelected: false)
-        
-        guard let selectedCell = collectionView.cellForItem(at: indexPath) as? ProfileImageCollectionViewCell else { return }
-        selectedCell.configureView(isSelected: true)
-        selectedProfileImageIndex = indexPath.item
-        
-        configureProfileImage()
-        delegate?.viewController(self, didSelectImageIndex: selectedProfileImageIndex)
+        profileImageDidSelectSubject.send(indexPath.item)
+        delegate?.viewController(self, didSelectImageIndex: indexPath.item)
     }
 }
