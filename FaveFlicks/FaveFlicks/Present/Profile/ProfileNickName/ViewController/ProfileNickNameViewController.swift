@@ -93,10 +93,11 @@ final class ProfileNickNameViewController: UIViewController {
                 
             case .pushProfileImageViewController(let imageIndex):
                 let isEditMode = viewModel.presentationStyleType == .modal ? true : false
-                let profileImageViewController = ProfileImageViewController(
+                let profileImageViewModel = ProfileImageViewModel(
                     selectedProfileImageIndex: imageIndex,
                     isEditMode: isEditMode
                 )
+                let profileImageViewController = ProfileImageViewController(viewModel: profileImageViewModel)
                 profileImageViewController.delegate = self
                 navigationController?.pushViewController(profileImageViewController, animated: true)
             }
