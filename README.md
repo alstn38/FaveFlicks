@@ -7,9 +7,8 @@
 좋아하는 영화를 '좋아요'로 저장하고
 
 **FaveFlicks**와 함께 영화 세계를 만들어보세요! 🎥✨
-
-
-
+<br>
+<br>
 
 ## 주요 기능
 
@@ -20,8 +19,7 @@
 | <img width=200 src="https://github.com/user-attachments/assets/b540060e-42e5-4c62-abc9-d223f6643e31"> | 
 
 - 프로필 사진과 닉네임을 설정할 수 있습니다.
-
-
+<br>
 
 ### 🎬 메인화면
 
@@ -32,8 +30,7 @@
 - 사용자의 정보를 확인할 수 있습니다.
 - 최근 검색어 기능을 제공합니다.
 - 현재 영화 트렌드 TOP 10 영화에 대한 정보를 확인할 수 있습니다.
-
-
+<br>
 
 ### 🔍 **검색 기능**
 
@@ -43,8 +40,7 @@
 
 - 원하는 제목의 영화를 검색할 수 있습니다.
 - 검색 키워드는 하이라이트 처리됩니다.
-
-
+<br>
 
 ### **👀 최근 검색어 기능**
 
@@ -54,8 +50,7 @@
 
 - 검색 기능을 통해 검색한 키워드에 대해서 쉽게 검색할 수 있습니다.
 - 최근 검색어는 삭제할 수 있습니다.
-
-
+<br>
 
 ### 🎞 **영화 상세 정보**
 
@@ -65,8 +60,7 @@
 
 - 영화 이미지, 개봉일, 평점, 장르, 줄거리, 출연진, 포스터 정보를 제공합니다.
 - 좋아요 버튼을 눌러 원하는 영화를 저장할 수 있습니다.
-
-
+<br>
 
 ### 👤 **프로필 설정**
 
@@ -77,8 +71,8 @@
 - 프로필 사진과 닉네임을 변경할 수 있습니다.
 - 회원 탈퇴 기능이 포함되어 있습니다.
 - 기존의 닉네임과 이미지가 표시됩니다.
-
-
+<br>
+<br>
 
 ## 🎯 앱 기술 설명
 
@@ -102,16 +96,14 @@ Alamofire는 싱글톤으로 설계되어 있기 때문에 `NetworkService` 또�
 온보딩 여부, 닉네임, 프로필 이미지, 가입날짜, 좋아하는 영화 등의 사용자 정보를 저장하는 과정에서 UserDefault를 사용했습니다.
 
 반복적으로 사용되는 연산 프로퍼티를 줄이고, 직관적인 사용을 위하여 `Property Wrapper`를 활용하여 UserDefaults 저장 모델을 설계했습니다.
-
-
+<br>
 
 **성능최적화를 위한 고민**
 
 - `final`, `private` 키워드를 활용한 Dynamic Dispatch 감소시키고 Static Dispatch의 사용을 증가시켰습니다.
 - 사용자의 좋아하는 영화 조회 기능을 위해 `Dictionary` 사용하여 탐색 `시간 복잡도를 감소`시켜 데이터 접근 시간을 최소화 했습니다.
 - 검색 결과 처리를 위한 20개 검색결과를 기준으로 `pagination` 처리하여 `네트워크 사용량을 감소`시켰습니다.
-
-
+<br>
 
 **사용자 UX 경험 향상을 위한 고민**
 
@@ -125,15 +117,14 @@ Alamofire는 싱글톤으로 설계되어 있기 때문에 `NetworkService` 또�
 - 검색 결과 화면의 경우 검색한 키워드의 `Highlight`를 통해 사용자가 원하는 결과를 쉽게 찾을 수 있도록 UI를 개선했습니다.
 - 네트워크 통신 결과값의 값이 없는 경우 “영화 줄거리 정보가 없습니다”와 같은 기본 메시지와 기본 이미지 대체와 같은 예외 처리를 통해 사용자에게 빈 정보를 제공하지 않도록 했습니다.
 
-
+<br>
 
 **UI에 대한 고민**
 
 - UICollectionView의 `DynamicCell`을 활용하여 최근 검색어 문자의 길이에 상관없이 모든 검색기록이 보이도록 했습니다.
 - 화면 비율을 통한 메인화면의 UICollectionView Cell 크기를 설정하여 모든 기기에서 최적의 레이아웃을 유지할 수 있도록 했습니다.
-
-
-
+<br>
+<br>
 
 ## 🛠 앱 기술 스택
 
@@ -141,9 +132,8 @@ Alamofire는 싱글톤으로 설계되어 있기 때문에 `NetworkService` 또�
 - **UI Framework**: UIKit
 - **Data Persistence**: UserDefaults
 - **External dependency**: Alamofire, Kingfisher, SnapKit
-
-
-
+<br>
+<br>
 
 ## 🎯 개발 환경
 
@@ -151,8 +141,8 @@ Alamofire는 싱글톤으로 설계되어 있기 때문에 `NetworkService` 또�
 ![Swift](https://img.shields.io/badge/Swift-5.9-FA7343?style=for-the-badge&logo=swift&logoColor=white)  
 ![Xcode](https://img.shields.io/badge/Xcode-16.2-1575F9?style=for-the-badge&logo=Xcode&logoColor=white)  
 
-
-
+<br>
+<br>
 
 ## 📅 개발 정보
 
