@@ -11,27 +11,18 @@ final class ProfileNickNameViewController: UIViewController {
     
     private let viewModel: ProfileNickNameViewModel
     private let input: ProfileNickNameViewModel.Input
-    private let output: ProfileNickNameViewModel.Output
     private let profileNickNameView = ProfileNickNameView()
-    
-    private let viewDidLoadSubject: CurrentValueRelay<Void> = CurrentValueRelay(())
-    private let profileImageViewDidTapSubject: CurrentValueRelay<Void> = CurrentValueRelay(())
-    private let profileImageDidChangeSubject: CurrentValueRelay<Int> = CurrentValueRelay(0)
-    private let nickNameTextFieldEditingChangeSubject: CurrentValueRelay<String?> = CurrentValueRelay(nil)
-    private let mbtiButtonDidTapSubject: CurrentValueRelay<ProfileNickNameView.MBTIButtonType> = CurrentValueRelay(.extraversion)
-    private let confirmButtonDidTapSubject: CurrentValueRelay<Void> = CurrentValueRelay(())
     
     init(viewModel: ProfileNickNameViewModel) {
         self.viewModel = viewModel
         self.input = ProfileNickNameViewModel.Input(
-            viewDidLoad: viewDidLoadSubject,
-            profileImageViewDidTap: profileImageViewDidTapSubject,
-            profileImageDidChange: profileImageDidChangeSubject,
-            nickNameTextFieldEditingChange: nickNameTextFieldEditingChangeSubject,
-            mbtiButtonDidTap: mbtiButtonDidTapSubject,
-            confirmButtonDidTap: confirmButtonDidTapSubject
+            viewDidLoad: CurrentValueRelay(()),
+            profileImageViewDidTap: CurrentValueRelay(()),
+            profileImageDidChange: CurrentValueRelay(0),
+            nickNameTextFieldEditingChange: CurrentValueRelay(nil),
+            mbtiButtonDidTap: CurrentValueRelay(.extraversion),
+            confirmButtonDidTap: CurrentValueRelay(())
         )
-        self.output = viewModel.transform(from: input)
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -53,7 +44,7 @@ final class ProfileNickNameViewController: UIViewController {
         configureTapGestureRecognizer()
         configureTextField()
         configureButton()
-        viewDidLoadSubject.send(())
+        input.viewDidLoad.send(())
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -61,6 +52,8 @@ final class ProfileNickNameViewController: UIViewController {
     }
     
     private func configureBind() {
+        let output = viewModel.transform(from: input)
+        
         output.profileImageIndex.bind { [weak self] index in
             guard let self else { return }
             let profileImage = viewModel.profileImageManager.getProfileImage(at: index)
@@ -192,20 +185,20 @@ final class ProfileNickNameViewController: UIViewController {
     }
     
     @objc private func profileImageViewDidTap(_ sender: UIView) {
-        profileImageViewDidTapSubject.send(())
+        input.profileImageViewDidTap.send(())
     }
     
     @objc private func nickNameTextFieldDidEditingChange(_ sender: UITextField) {
-        nickNameTextFieldEditingChangeSubject.send(sender.text)
+        input.nickNameTextFieldEditingChange.send(sender.text)
     }
     
     @objc private func mbtiButtonDidTap(_ sender: UIButton) {
         guard let buttonType = ProfileNickNameView.MBTIButtonType(rawValue: sender.tag) else { return }
-        mbtiButtonDidTapSubject.send(buttonType)
+        input.mbtiButtonDidTap.send(buttonType)
     }
     
     @objc private func confirmButtonDidTap(_ sender: UIButton) {
-        confirmButtonDidTapSubject.send(())
+        input.confirmButtonDidTap.send(())
     }
     
     @objc private func cancelButtonDidTap(_ sender: UIBarButtonItem) {
@@ -213,7 +206,7 @@ final class ProfileNickNameViewController: UIViewController {
     }
     
     @objc private func saveButtonDidTap(_ sender: UIBarButtonItem) {
-        confirmButtonDidTapSubject.send(())
+        input.confirmButtonDidTap.send(())
     }
 }
 
@@ -230,6 +223,6 @@ extension ProfileNickNameViewController: UITextFieldDelegate {
 extension ProfileNickNameViewController: ProfileImageViewControllerDelegate {
     
     func viewController(_ viewController: UIViewController, didSelectImageIndex: Int) {
-        profileImageDidChangeSubject.send(didSelectImageIndex)
+        input.profileImageDidChange.send(didSelectImageIndex)
     }
 }
