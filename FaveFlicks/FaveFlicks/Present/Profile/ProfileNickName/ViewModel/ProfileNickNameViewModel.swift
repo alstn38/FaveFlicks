@@ -7,7 +7,7 @@
 
 import Foundation
 
-final class ProfileNickNameViewModel {
+final class ProfileNickNameViewModel: InputOutputModel {
     
     struct Input {
         let viewDidLoad: CurrentValueRelay<Void>

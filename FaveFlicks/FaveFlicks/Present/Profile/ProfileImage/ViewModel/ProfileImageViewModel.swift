@@ -7,7 +7,7 @@
 
 import Foundation
 
-final class ProfileImageViewModel {
+final class ProfileImageViewModel: InputOutputModel {
     
     struct Input {
         let profileImageDidSelect: CurrentValueRelay<Int>
