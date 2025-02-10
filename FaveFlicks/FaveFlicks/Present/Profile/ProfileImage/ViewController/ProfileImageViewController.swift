@@ -15,11 +15,8 @@ final class ProfileImageViewController: UIViewController {
     
     private let viewModel: ProfileImageViewModel
     private let input: ProfileImageViewModel.Input
-    private let output: ProfileImageViewModel.Output
     private let profileImageView = ProfileImageView()
     weak var delegate: ProfileImageViewControllerDelegate?
-    
-    private let profileImageDidSelectSubject: CurrentValueRelay<Int> = CurrentValueRelay(0)
 
     override func loadView() {
         view = profileImageView
@@ -27,8 +24,7 @@ final class ProfileImageViewController: UIViewController {
     
     init(viewModel: ProfileImageViewModel) {
         self.viewModel = viewModel
-        self.input = ProfileImageViewModel.Input(profileImageDidSelect: profileImageDidSelectSubject)
-        self.output = viewModel.transform(from: input)
+        self.input = ProfileImageViewModel.Input(profileImageDidSelect: CurrentValueRelay(0))
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -46,6 +42,8 @@ final class ProfileImageViewController: UIViewController {
     }
     
     private func configureBind() {
+        let output = viewModel.transform(from: input)
+        
         output.profileImageIndex.bind { [weak self] past, current in
             guard let self else { return }
             configureProfileImageCell(at: past, isSelected: false)
@@ -104,7 +102,7 @@ extension ProfileImageViewController: UICollectionViewDelegate, UICollectionView
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        profileImageDidSelectSubject.send(indexPath.item)
+        input.profileImageDidSelect.send(indexPath.item)
         delegate?.viewController(self, didSelectImageIndex: indexPath.item)
     }
 }
