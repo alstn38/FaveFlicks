@@ -17,23 +17,25 @@ final class ProfileImageViewModel: InputOutputModel {
         let profileImageIndex: BehaviorSubject<(past: Int, current: Int)>
     }
     
-    private let profileImageIndexSubject: BehaviorSubject<(past: Int, current: Int)>
-    
     let isEditMode: Bool
     let profileImageManager = ProfileImageManager()
+    private var selectedProfileImageIndex: Int
     
     init(selectedProfileImageIndex: Int, isEditMode: Bool) {
-        self.profileImageIndexSubject = BehaviorSubject((0, selectedProfileImageIndex))
+        self.selectedProfileImageIndex = selectedProfileImageIndex
         self.isEditMode = isEditMode
     }
     
     func transform(from input: Input) -> Output {
+        let output = Output(profileImageIndex: BehaviorSubject((0, selectedProfileImageIndex)))
+        
         input.profileImageDidSelect.bind { [weak self] index in
             guard let self else { return }
-            let pastIndex = profileImageIndexSubject.value.current
-            profileImageIndexSubject.send((pastIndex, index))
+            let pastIndex = selectedProfileImageIndex
+            selectedProfileImageIndex = index
+            output.profileImageIndex.send((pastIndex, index))
         }
         
-        return Output(profileImageIndex: profileImageIndexSubject)
+        return output
     }
 }
