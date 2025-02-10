@@ -26,14 +26,9 @@ final class ProfileNickNameViewModel: InputOutputModel {
         let moveToOtherViewController: CurrentValueRelay<screenTransitionType>
     }
     
-    private let profileImageIndexSubject: CurrentValueRelay<Int> = CurrentValueRelay(0)
-    private let nickNameStatusTextSubject: CurrentValueRelay<NickNameStatus> = CurrentValueRelay(.empty)
-    private let mbtiButtonStatusSubject: CurrentValueRelay<(ProfileNickNameView.MBTIButtonType, Bool)> = CurrentValueRelay((.extraversion, false))
-    private let confirmButtonStatusSubject: BehaviorSubject<Bool> = BehaviorSubject(false)
-    private let moveToOtherViewControllerSubject: CurrentValueRelay<screenTransitionType> = CurrentValueRelay(.dismiss)
-    
     let presentationStyleType: PresentationStyleType
     let profileImageManager = ProfileImageManager()
+    private var currentImageIndex: Int = 0
     private var currentNickNameText: String?
     private var isPossibleNickName: Bool = false
     private var userMBTITypeDictionary: [Int: ProfileNickNameView.MBTIButtonType?] = [:]
@@ -48,37 +43,55 @@ final class ProfileNickNameViewModel: InputOutputModel {
     }
     
     func transform(from input: Input) -> Output {
+        let output = Output(
+            profileImageIndex: CurrentValueRelay(0),
+            nickNameStatusText: CurrentValueRelay(.empty),
+            mbtiButtonStatus: CurrentValueRelay((.extraversion, false)),
+            confirmButtonStatus: BehaviorSubject(false),
+            moveToOtherViewController: CurrentValueRelay(.dismiss)
+        )
+        
         input.viewDidLoad.bind { [weak self] _ in
             guard let self else { return }
             switch presentationStyleType {
             case .push:
-                profileImageIndexSubject.send(profileImageManager.randomImageIndex)
+                currentImageIndex = profileImageManager.randomImageIndex
+                output.profileImageIndex.send(profileImageManager.randomImageIndex)
             case .modal:
-                profileImageIndexSubject.send(UserDefaultManager.shared.profileImageIndex)
+                currentImageIndex = UserDefaultManager.shared.profileImageIndex
+                output.profileImageIndex.send(UserDefaultManager.shared.profileImageIndex)
             }
         }
         
         input.profileImageViewDidTap.bind { [weak self] _ in
             guard let self else { return }
-            moveToOtherViewControllerSubject.send(.pushProfileImageViewController(profileImageIndexSubject.value))
+            output.moveToOtherViewController.send(.pushProfileImageViewController(currentImageIndex))
         }
         
         input.profileImageDidChange.bind { [weak self] imageIndex in
             guard let self else { return }
-            profileImageIndexSubject.send(imageIndex)
+            currentImageIndex = imageIndex
+            output.profileImageIndex.send(imageIndex)
         }
         
         input.nickNameTextFieldEditingChange.bind { [weak self] text in
             guard let self else { return }
             currentNickNameText = text
-            validateNickName(text)
-            validateConfirmButton()
+            let nickNameStatus = validateNickName(text)
+            if nickNameStatus == .possible {
+                isPossibleNickName = true
+            }
+            output.nickNameStatusText.send(nickNameStatus)
+            
+            let isValidationConfirmButton = isValidateConfirmButton()
+            output.confirmButtonStatus.send(isValidationConfirmButton)
         }
         
         input.mbtiButtonDidTap.bind { [weak self] buttonType in
             guard let self else { return }
-            validateMBTIButton(buttonType)
-            validateConfirmButton()
+            validateMBTIButton(buttonType, mbtiButtonStatusSubject: output.mbtiButtonStatus)
+            let isValidationConfirmButton = isValidateConfirmButton()
+            output.confirmButtonStatus.send(isValidationConfirmButton)
         }
         
         input.confirmButtonDidTap.bind { [weak self] _ in
@@ -87,54 +100,46 @@ final class ProfileNickNameViewModel: InputOutputModel {
             
             switch presentationStyleType {
             case .push:
-                moveToOtherViewControllerSubject.send(.changeRootView)
+                output.moveToOtherViewController.send(.changeRootView)
             case .modal:
-                moveToOtherViewControllerSubject.send(.dismiss)
+                output.moveToOtherViewController.send(.dismiss)
             }
         }
         
-        return Output(
-            profileImageIndex: profileImageIndexSubject,
-            nickNameStatusText: nickNameStatusTextSubject,
-            mbtiButtonStatus: mbtiButtonStatusSubject,
-            confirmButtonStatus: confirmButtonStatusSubject,
-            moveToOtherViewController: moveToOtherViewControllerSubject
-        )
+        return output
     }
     
-    private func validateNickName(_ nickName: String?) {
-        guard let nickName else { return }
+    private func validateNickName(_ nickName: String?) -> NickNameStatus {
+        guard let nickName else { return .empty }
         let sectionSignArray: [Character] = ["@", "#", "$", "%"]
         
         guard !nickName.isEmpty else {
             isPossibleNickName = false
-            nickNameStatusTextSubject.send(.empty)
-            return
+            return .empty
         }
         
         guard nickName.count >= 2 && nickName.count < 10 else {
             isPossibleNickName = false
-            nickNameStatusTextSubject.send(.invalidRange)
-            return
+            return .invalidRange
         }
         
         guard !nickName.contains(where: { sectionSignArray.contains($0) }) else {
             isPossibleNickName = false
-            nickNameStatusTextSubject.send(.hasSectionSign)
-            return
+            return .hasSectionSign
         }
         
         guard !nickName.contains(where: { $0.isNumber }) else {
             isPossibleNickName = false
-            nickNameStatusTextSubject.send(.hasNumber)
-            return
+            return .hasNumber
         }
         
-        nickNameStatusTextSubject.send(.possible)
-        isPossibleNickName = true
+        return .possible
     }
     
-    private func validateMBTIButton(_ type: ProfileNickNameView.MBTIButtonType) {
+    private func validateMBTIButton(
+        _ type: ProfileNickNameView.MBTIButtonType,
+        mbtiButtonStatusSubject: CurrentValueRelay<(ProfileNickNameView.MBTIButtonType, Bool)>
+    ) {
         let mbtiSection = type.rawValue / 2
         guard let userMBTIType = userMBTITypeDictionary[mbtiSection] as? ProfileNickNameView.MBTIButtonType else {
             userMBTITypeDictionary[mbtiSection] = type
@@ -150,7 +155,7 @@ final class ProfileNickNameViewModel: InputOutputModel {
         userMBTITypeDictionary[mbtiSection] = userMBTIType != type ? type: nil
     }
     
-    private func validateConfirmButton() {
+    private func isValidateConfirmButton() -> Bool {
         guard
             isPossibleNickName,
             userMBTITypeDictionary[0] is ProfileNickNameView.MBTIButtonType,
@@ -158,14 +163,15 @@ final class ProfileNickNameViewModel: InputOutputModel {
             userMBTITypeDictionary[2] is ProfileNickNameView.MBTIButtonType,
             userMBTITypeDictionary[3] is ProfileNickNameView.MBTIButtonType
         else {
-            return confirmButtonStatusSubject.send(false)
+            return false
         }
-        confirmButtonStatusSubject.send(true)
+        
+        return true
     }
     
     private func saveUserInfo() {
         UserDefaultManager.shared.hasProfile = true
-        UserDefaultManager.shared.profileImageIndex = profileImageIndexSubject.value
+        UserDefaultManager.shared.profileImageIndex = currentImageIndex
         UserDefaultManager.shared.nickName = currentNickNameText ?? ""
         
         if presentationStyleType == .push {
