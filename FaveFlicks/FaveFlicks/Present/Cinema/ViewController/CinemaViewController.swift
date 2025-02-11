@@ -9,19 +9,27 @@ import UIKit
 
 final class CinemaViewController: UIViewController {
     
+    private let viewModel: CinemaViewModel
+    private let input: CinemaViewModel.Input
     private let cinemaView = CinemaView()
     
-    private var recentSearchTextArray: [String] = UserDefaultManager.shared.recentSearchedTextArray {
-        didSet {
-            configureRecentSearch()
-            cinemaView.recentSearchedCollectionView.reloadData()
-        }
+    init(viewModel: CinemaViewModel) {
+        self.viewModel = viewModel
+        self.input = CinemaViewModel.Input(
+            viewDidLoad: CurrentValueRelay(()),
+            searchButtonDidTap: CurrentValueRelay(()),
+            userInfoViewDidTap: CurrentValueRelay(()),
+            recentSearchedCellDidTap: CurrentValueRelay(0),
+            recentSearchedDeleteButton: CurrentValueRelay(.all),
+            todayMovieCellDidTap: CurrentValueRelay(0),
+            todayMovieCellFavoriteButtonDidTap: CurrentValueRelay(0)
+        )
+        super.init(nibName: nil, bundle: nil)
     }
     
-    private var trendMovieArray: [DetailMovie] = [] {
-        didSet {
-            cinemaView.todayMovieCollectionView.reloadData()
-        }
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
     override func loadView() {
@@ -31,14 +39,62 @@ final class CinemaViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        configureBindData()
         configureNavigation()
-        configureAddObserver()
-        configureUserInfoView()
-        configureRecentSearch()
         configureTapGestureRecognizer()
         configureAddTarget()
         configureCollectionView()
-        fetchTrendMovie()
+        input.viewDidLoad.send(())
+    }
+    
+    private func configureBindData() {
+        let output = viewModel.transform(from: input)
+        
+        output.moveToOtherViewController.bind { [weak self] otherControllerType in
+            guard let self else { return }
+            
+            switch otherControllerType {
+            case .search(let searchedText):
+                let searchViewController = SearchViewController()
+                if let searchedText {
+                    searchViewController.configureRecentSearchResult(searchedText: searchedText)
+                }
+                navigationController?.pushViewController(searchViewController, animated: true)
+                
+            case .userInfo:
+                presentProfileNickNameViewController()
+                
+            case .detailMovie(let detailMovie):
+                let detailMovieViewController = DetailMovieViewController(detailMovie: detailMovie)
+                navigationController?.pushViewController(detailMovieViewController, animated: true)
+            }
+        }
+        
+        output.updateUserInfo.bind { [weak self] _ in
+            guard let self else { return }
+            cinemaView.userInfoView.updateUserInfo()
+        }
+        
+        output.updateRecentSearched.bind { [weak self] _ in
+            guard let self else { return }
+            cinemaView.recentSearchedCollectionView.reloadData()
+        }
+        
+        output.recentSearchedEmptyState.bind { [weak self] isEmpty in
+            guard let self else { return }
+            cinemaView.recentSearchedDeleteButton.isHidden = isEmpty
+            cinemaView.noRecentSearchedGuideLabel.isHidden = !isEmpty
+        }
+        
+        output.updateTodayMove.bind { [weak self] _ in
+            guard let self else { return }
+            cinemaView.todayMovieCollectionView.reloadData()
+        }
+        
+        output.presentError.bind { [weak self] (title, message) in
+            guard let self else { return }
+            presentAlert(title: title, message: message)
+        }
     }
     
     private func configureNavigation() {
@@ -54,50 +110,17 @@ final class CinemaViewController: UIViewController {
         navigationItem.rightBarButtonItem = searchButton
     }
     
-    private func configureAddObserver() {
-        NotificationCenter.default.addObserver(
-            forName: Notification.Name.updateUserInfo,
-            object: nil,
-            queue: nil
-        ) { [weak self] _ in
-            self?.cinemaView.userInfoView.updateUserInfo()
-        }
-        
-        NotificationCenter.default.addObserver(
-            forName: Notification.Name.updateRecentSearchTextArray,
-            object: nil,
-            queue: nil
-        ) { [weak self] _ in
-            self?.recentSearchTextArray = UserDefaultManager.shared.recentSearchedTextArray
-        }
-        
-        NotificationCenter.default.addObserver(
-            forName: Notification.Name.updateFavoriteMovieDictionary,
-            object: nil,
-            queue: nil
-        ) { [weak self] _ in
-            self?.cinemaView.todayMovieCollectionView.reloadData()
-            self?.cinemaView.userInfoView.updateUserInfo()
-        }
-    }
-    
-    private func configureUserInfoView() {
-        cinemaView.userInfoView.updateUserInfo()
-    }
-    
-    private func configureRecentSearch() {
-        let isEmptyRecentSearchTextArray = recentSearchTextArray.isEmpty
-        cinemaView.noRecentSearchedGuideLabel.isHidden = !isEmptyRecentSearchTextArray
-        cinemaView.recentSearchedDeleteButton.isHidden = isEmptyRecentSearchTextArray
-    }
-    
     private func configureTapGestureRecognizer() {
         let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(userInfoViewDidTap))
         cinemaView.userInfoView.addGestureRecognizer(tapGestureRecognizer)
     }
     
     private func configureAddTarget() {
-        cinemaView.recentSearchedDeleteButton.addTarget(self, action: #selector(recentSearchedDeleteButtonDidTap), for: .touchUpInside)
+        cinemaView.recentSearchedDeleteButton.addTarget(
+            self,
+            action: #selector(recentSearchedDeleteButtonDidTap),
+            for: .touchUpInside
+        )
     }
     
     private func configureCollectionView() {
@@ -116,25 +139,7 @@ final class CinemaViewController: UIViewController {
         )
     }
     
-    private func fetchTrendMovie() {
-        let endPoint = TrendEndPoint.movie
-        NetworkService.shared.request(endPoint: endPoint, responseType: TrendMovie.self) { [weak self] response in
-            guard let self else { return }
-            switch response {
-            case .success(let value):
-                trendMovieArray = value.results
-            case .failure(let error):
-                self.presentAlert(title: StringLiterals.Alert.networkError, message: error.description)
-            }
-        }
-    }
-    
-    @objc private func searchButtonDidTap(_ sender: UIBarButtonItem) {
-        let searchViewController = SearchViewController()
-        navigationController?.pushViewController(searchViewController, animated: true)
-    }
-    
-    @objc private func userInfoViewDidTap(_ sender: UITapGestureRecognizer) {
+    private func presentProfileNickNameViewController() {
         let profileNickNameViewModel = ProfileNickNameViewModel(presentationStyleType: .modal)
         let profileNickNameViewController = ProfileNickNameViewController(viewModel: profileNickNameViewModel)
         let profileNickNameNavigationController = UINavigationController(rootViewController: profileNickNameViewController)
@@ -149,27 +154,24 @@ final class CinemaViewController: UIViewController {
         present(profileNickNameNavigationController, animated: true)
     }
     
+    @objc private func searchButtonDidTap(_ sender: UIBarButtonItem) {
+        input.searchButtonDidTap.send(())
+    }
+    
+    @objc private func userInfoViewDidTap(_ sender: UITapGestureRecognizer) {
+        input.userInfoViewDidTap.send(())
+    }
+    
     @objc private func recentSearchedDeleteButtonDidTap(_ sender: UIButton) {
-        UserDefaultManager.shared.recentSearchedTextArray.removeAll()
-        recentSearchTextArray = UserDefaultManager.shared.recentSearchedTextArray
+        input.recentSearchedDeleteButton.send(.all)
     }
     
     @objc private func recentSearchedCellDeleteButtonDidTap(_ sender: UIButton) {
-        UserDefaultManager.shared.recentSearchedTextArray.remove(at: sender.tag)
-        recentSearchTextArray = UserDefaultManager.shared.recentSearchedTextArray
+        input.recentSearchedDeleteButton.send(.index(sender.tag))
     }
     
     @objc private func todayMovieCellFavoriteButtonDidTap(_ sender: UIButton) {
-        let movieID = String(trendMovieArray[sender.tag].id)
-        let isFavoriteMovie = UserDefaultManager.shared.favoriteMovieDictionary.keys.contains(movieID)
-        
-        switch isFavoriteMovie {
-        case true:
-            UserDefaultManager.shared.favoriteMovieDictionary.removeValue(forKey: movieID)
-            
-        case false:
-            UserDefaultManager.shared.favoriteMovieDictionary[movieID] = true
-        }
+        input.todayMovieCellFavoriteButtonDidTap.send(sender.tag)
     }
 }
 
@@ -179,10 +181,10 @@ extension CinemaViewController: UICollectionViewDelegate, UICollectionViewDataSo
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         switch collectionView {
         case cinemaView.recentSearchedCollectionView:
-            return recentSearchTextArray.count
+            return viewModel.recentSearchTextArray.count
             
         case cinemaView.todayMovieCollectionView:
-            return trendMovieArray.count
+            return viewModel.trendMovieArray.count
             
         default:
             return 0
@@ -197,9 +199,13 @@ extension CinemaViewController: UICollectionViewDelegate, UICollectionViewDataSo
                 for: indexPath
             ) as? RecentSearchedCollectionViewCell else { return UICollectionViewCell() }
             
-            cell.configureCell(recentSearchTextArray[indexPath.item])
+            cell.configureCell(viewModel.recentSearchTextArray[indexPath.item])
             cell.deleteButton.tag = indexPath.item
-            cell.deleteButton.addTarget(self, action: #selector(recentSearchedCellDeleteButtonDidTap), for: .touchUpInside)
+            cell.deleteButton.addTarget(
+                self,
+                action: #selector(recentSearchedCellDeleteButtonDidTap),
+                for: .touchUpInside
+            )
             return cell
             
         case cinemaView.todayMovieCollectionView:
@@ -208,9 +214,13 @@ extension CinemaViewController: UICollectionViewDelegate, UICollectionViewDataSo
                 for: indexPath
             ) as? TodayMovieCollectionViewCell else { return UICollectionViewCell() }
             
-            cell.configureCell(trendMovieArray[indexPath.item])
+            cell.configureCell(viewModel.trendMovieArray[indexPath.item])
             cell.favoriteButton.tag = indexPath.item
-            cell.favoriteButton.addTarget(self, action: #selector(todayMovieCellFavoriteButtonDidTap), for: .touchUpInside)
+            cell.favoriteButton.addTarget(
+                self,
+                action: #selector(todayMovieCellFavoriteButtonDidTap),
+                for: .touchUpInside
+            )
             return cell
             
         default:
@@ -221,15 +231,10 @@ extension CinemaViewController: UICollectionViewDelegate, UICollectionViewDataSo
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         switch collectionView {
         case cinemaView.recentSearchedCollectionView:
-            let recentSearchedText = recentSearchTextArray[indexPath.item]
-            let searchViewController = SearchViewController()
-            searchViewController.configureRecentSearchResult(searchedText: recentSearchedText)
-            navigationController?.pushViewController(searchViewController, animated: true)
+            input.recentSearchedCellDidTap.send(indexPath.item)
             
         case cinemaView.todayMovieCollectionView:
-            let detailMovie = trendMovieArray[indexPath.item]
-            let detailMovieViewController = DetailMovieViewController(detailMovie: detailMovie)
-            navigationController?.pushViewController(detailMovieViewController, animated: true)
+            input.todayMovieCellDidTap.send(indexPath.item)
             
         default:
             return
