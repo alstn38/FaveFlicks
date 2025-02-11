@@ -55,10 +55,8 @@ final class CinemaViewController: UIViewController {
             
             switch otherControllerType {
             case .search(let searchedText):
-                let searchViewController = SearchViewController()
-                if let searchedText {
-                    searchViewController.configureRecentSearchResult(searchedText: searchedText)
-                }
+                let searchViewModel = SearchViewModel(recentSearchText: searchedText)
+                let searchViewController = SearchViewController(viewModel: searchViewModel)
                 navigationController?.pushViewController(searchViewController, animated: true)
                 
             case .userInfo:
