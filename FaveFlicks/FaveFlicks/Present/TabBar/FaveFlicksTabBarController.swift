@@ -18,7 +18,8 @@ final class FaveFlicksTabBarController: UITabBarController {
     }
     
     private func configureTabBarController() {
-        let cinemaViewController = CinemaViewController()
+        let cinemaViewModel = CinemaViewModel()
+        let cinemaViewController = CinemaViewController(viewModel: cinemaViewModel)
         cinemaViewController.tabBarItem = UITabBarItem(
             title: StringLiterals.TapBar.cinemaTitle,
             image: UIImage(systemName: "popcorn"),
