@@ -63,7 +63,8 @@ final class CinemaViewController: UIViewController {
                 presentProfileNickNameViewController()
                 
             case .detailMovie(let detailMovie):
-                let detailMovieViewController = DetailMovieViewController(detailMovie: detailMovie)
+                let detailMovieViewModel = DetailMovieViewModel(detailMovie: detailMovie)
+                let detailMovieViewController = DetailMovieViewController(viewModel: detailMovieViewModel)
                 navigationController?.pushViewController(detailMovieViewController, animated: true)
             }
         }

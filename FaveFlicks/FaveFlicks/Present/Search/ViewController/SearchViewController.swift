@@ -68,8 +68,8 @@ final class SearchViewController: UIViewController {
             guard let self,
                   let detailMovie
             else { return }
-            
-            let detailMovieViewController = DetailMovieViewController(detailMovie: detailMovie)
+            let detailMovieViewModel = DetailMovieViewModel(detailMovie: detailMovie)
+            let detailMovieViewController = DetailMovieViewController(viewModel: detailMovieViewModel)
             navigationController?.pushViewController(detailMovieViewController, animated: true)
         }
         
