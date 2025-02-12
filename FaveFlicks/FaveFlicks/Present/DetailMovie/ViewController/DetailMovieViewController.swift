@@ -9,37 +9,17 @@ import UIKit
 
 final class DetailMovieViewController: UIViewController {
     
+    private let viewModel: DetailMovieViewModel
+    private let input: DetailMovieViewModel.Input
     private let detailMovieView = DetailMovieView()
-    private let detailMovie: DetailMovie
-    private var backdropImageArray: [DetailImage] = [] {
-        didSet {
-            let isEmptyBackdropImageArray = backdropImageArray.isEmpty
-            detailMovieView.backdropCollectionView.isHidden = isEmptyBackdropImageArray
-            detailMovieView.backdropGuideLabel.isHidden = !isEmptyBackdropImageArray
-            detailMovieView.backdropCollectionView.reloadData()
-        }
-    }
     
-    private var castArray: [Cast] = [] {
-        didSet {
-            let isEmptyCastArray = castArray.isEmpty
-            detailMovieView.castCollectionView.isHidden = isEmptyCastArray
-            detailMovieView.castGuideLabel.isHidden = !isEmptyCastArray
-            detailMovieView.castCollectionView.reloadData()
-        }
-    }
-    
-    private var posterImageArray: [DetailImage] = [] {
-        didSet {
-            let isEmptyPosterImageArray = posterImageArray.isEmpty
-            detailMovieView.posterCollectionView.isHidden = isEmptyPosterImageArray
-            detailMovieView.posterGuideLabel.isHidden = !isEmptyPosterImageArray
-            detailMovieView.posterCollectionView.reloadData()
-        }
-    }
-    
-    init(detailMovie: DetailMovie) {
-        self.detailMovie = detailMovie
+    init(viewModel: DetailMovieViewModel) {
+        self.viewModel = viewModel
+        self.input = DetailMovieViewModel.Input(
+            viewDidLoad: CurrentValueRelay(()),
+            favoriteButtonDidTap: CurrentValueRelay(()),
+            moreHideButtonDidTap: CurrentValueRelay(())
+        )
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -55,12 +35,61 @@ final class DetailMovieViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        configureBindData()
         configureNavigation()
         configureCollectionView()
         configureAddTarget()
-        detailMovieView.configureView(detailMovie)
-        fetchMovieImage(movieID: detailMovie.id)
-        fetchCredit(movieID: detailMovie.id)
+        input.viewDidLoad.send(())
+    }
+    
+    private func configureBindData() {
+        let output = viewModel.transform(from: input)
+        
+        output.updateFavoriteButton.bind { [weak self] isFavorite in
+            guard let self else { return }
+            configureFavoriteButtonImage(isFavorite: isFavorite)
+        }
+        
+        output.updateBackdrop.bind { [weak self] _ in
+            guard let self else { return }
+            let isEmptyBackdrop = viewModel.backdropImageArray.isEmpty
+            detailMovieView.backdropCollectionView.isHidden = isEmptyBackdrop
+            detailMovieView.backdropGuideLabel.isHidden = !isEmptyBackdrop
+            detailMovieView.backdropCollectionView.reloadData()
+            self.detailMovieView.configurePageControl(numberOfPages: viewModel.backdropImageArray.count)
+        }
+        
+        output.updateDetailMovieInfo.bind { [weak self] detailMovie in
+            guard let self else { return }
+            detailMovieView.configureView(viewModel.detailMovie)
+        }
+        
+        output.updateCastInfo.bind { [weak self] _ in
+            guard let self else { return }
+            let isEmptyCast = viewModel.castArray.isEmpty
+            detailMovieView.castCollectionView.isHidden = isEmptyCast
+            detailMovieView.castGuideLabel.isHidden = !isEmptyCast
+            detailMovieView.castCollectionView.reloadData()
+        }
+        
+        output.updatePosterInfo.bind { [weak self] _ in
+            guard let self else { return }
+            let isEmptyPosterImage = viewModel.posterImageArray.isEmpty
+            detailMovieView.posterCollectionView.isHidden = isEmptyPosterImage
+            detailMovieView.posterGuideLabel.isHidden = !isEmptyPosterImage
+            detailMovieView.posterCollectionView.reloadData()
+        }
+        
+        output.moreHideButtonState.bind { [weak self] synopsisLineType in
+            guard let self else { return }
+            detailMovieView.synopsisDescriptionLabel.numberOfLines = synopsisLineType.numberOfLines
+            detailMovieView.moreHideButton.isSelected = synopsisLineType.isSelected
+        }
+        
+        output.presentError.bind { [weak self] (title, message) in
+            guard let self else { return }
+            presentAlert(title: title, message: message)
+        }
     }
     
     private func configureNavigation() {
@@ -71,14 +100,12 @@ final class DetailMovieViewController: UIViewController {
             action: #selector(favoriteButtonDidTap)
         )
         
-        navigationItem.title = detailMovie.title
+        navigationItem.title = viewModel.detailMovie.title
         navigationItem.rightBarButtonItem = favoriteButton
-        configureFavoriteButtonImage()
     }
     
-    private func configureFavoriteButtonImage() {
-        let isFavoriteMovie = UserDefaultManager.shared.favoriteMovieDictionary.keys.contains(String(detailMovie.id))
-        let buttonImage = isFavoriteMovie ? UIImage(systemName: "heart.fill") : UIImage(systemName: "heart")
+    private func configureFavoriteButtonImage(isFavorite: Bool) {
+        let buttonImage = isFavorite ? UIImage(systemName: "heart.fill") : UIImage(systemName: "heart")
         navigationItem.rightBarButtonItem?.image = buttonImage
     }
     
@@ -109,53 +136,12 @@ final class DetailMovieViewController: UIViewController {
         detailMovieView.moreHideButton.addTarget(self, action: #selector(moreHideButtonDidTap), for: .touchUpInside)
     }
     
-    private func fetchMovieImage(movieID: Int) {
-        let endPoint = MovieImageEndPoint.movie(movieID: movieID)
-        NetworkService.shared.request(endPoint: endPoint, responseType: MovieImage.self) { [weak self] response in
-            guard let self else { return }
-            switch response {
-            case .success(let value):
-                self.backdropImageArray = Array(value.backdrops.prefix(5))
-                self.posterImageArray = value.posters
-                self.detailMovieView.configurePageControl(numberOfPages: self.backdropImageArray.count)
-            case .failure(let error):
-                self.presentAlert(title: StringLiterals.Alert.networkError, message: error.description)
-            }
-        }
-    }
-    
-    private func fetchCredit(movieID: Int) {
-        let endPoint = CreditEndPoint.movie(movieID: movieID)
-        NetworkService.shared.request(endPoint: endPoint, responseType: Credit.self) { [weak self] response in
-            guard let self else { return }
-            switch response {
-            case .success(let value):
-                self.castArray = value.cast
-            case .failure(let error):
-                self.presentAlert(title: StringLiterals.Alert.networkError, message: error.description)
-            }
-        }
-    }
-    
     @objc private func favoriteButtonDidTap(_ sender: UIBarButtonItem) {
-        let movieID = String(detailMovie.id)
-        let isFavoriteMovie = UserDefaultManager.shared.favoriteMovieDictionary.keys.contains(String(detailMovie.id))
-        
-        switch isFavoriteMovie {
-        case true:
-            UserDefaultManager.shared.favoriteMovieDictionary.removeValue(forKey: movieID)
-            
-        case false:
-            UserDefaultManager.shared.favoriteMovieDictionary[movieID] = true
-        }
-        
-        configureFavoriteButtonImage()
+        input.favoriteButtonDidTap.send(())
     }
     
     @objc private func moreHideButtonDidTap(_ sender: UIButton) {
-        let numberOfLines: Int = sender.isSelected ? 3 : 0
-        detailMovieView.synopsisDescriptionLabel.numberOfLines = numberOfLines
-        sender.isSelected.toggle()
+        input.moreHideButtonDidTap.send(())
     }
 }
 
@@ -165,13 +151,13 @@ extension DetailMovieViewController: UICollectionViewDelegate, UICollectionViewD
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         switch collectionView {
         case detailMovieView.backdropCollectionView:
-            return backdropImageArray.count
+            return viewModel.backdropImageArray.count
             
         case detailMovieView.castCollectionView:
-            return castArray.count
+            return viewModel.castArray.count
             
         case detailMovieView.posterCollectionView:
-            return posterImageArray.count
+            return viewModel.posterImageArray.count
             
         default:
             return 0
@@ -186,7 +172,7 @@ extension DetailMovieViewController: UICollectionViewDelegate, UICollectionViewD
                 for: indexPath
             ) as? BackdropCollectionViewCell else { return UICollectionViewCell() }
             
-            cell.configureCell(backdropImageArray[indexPath.item])
+            cell.configureCell(viewModel.backdropImageArray[indexPath.item])
             return cell
             
         case detailMovieView.castCollectionView:
@@ -195,7 +181,7 @@ extension DetailMovieViewController: UICollectionViewDelegate, UICollectionViewD
                 for: indexPath
             ) as? CastCollectionViewCell else { return UICollectionViewCell() }
             
-            cell.configureCell(castArray[indexPath.item])
+            cell.configureCell(viewModel.castArray[indexPath.item])
             return cell
             
         case detailMovieView.posterCollectionView:
@@ -204,7 +190,7 @@ extension DetailMovieViewController: UICollectionViewDelegate, UICollectionViewD
                 for: indexPath
             ) as? PosterCollectionViewCell else { return UICollectionViewCell() }
             
-            cell.configureCell(posterImageArray[indexPath.item])
+            cell.configureCell(viewModel.posterImageArray[indexPath.item])
             return cell
             
         default:
